@@ -1,2 +1,6 @@
 # IntelliJ IDEA
 .idea/
+
+# Ignoriere alle Inhalte im Ordner `data`, außer `.keep`, um die Ordnerstruktur zu erhalten
+scraper/src/data/*
+!scraper/src/data/.keep
