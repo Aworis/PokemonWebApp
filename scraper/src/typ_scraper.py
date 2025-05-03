@@ -5,12 +5,10 @@ import json
 from bs4 import BeautifulSoup
 import os
 
-# JSON-Datei laden
-with open("../config/urls.json", "r", encoding="utf-8") as file:
-    data = json.load(file)
+from scraper.src.config_loader import load_sitemap_url
 
 # Die URL extrahieren, wenn "typ" = "typen"
-SITEMAP_URL = next((entry["url"] for entry in data["sitemaps"] if entry["typ"] == "typen"), None)
+SITEMAP_URL = load_sitemap_url("typen")
 
 # Überprüfung der extrahierten URL
 if SITEMAP_URL:
