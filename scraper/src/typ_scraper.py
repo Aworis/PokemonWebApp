@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import os
 
 # JSON-Datei laden
-with open("config/urls.json", "r", encoding="utf-8") as file:
+with open("../config/urls.json", "r", encoding="utf-8") as file:
     data = json.load(file)
 
 # Die URL extrahieren, wenn "typ" = "typen"
@@ -39,8 +39,8 @@ pattern = re.compile(r"typendex/[\w-]+\.php$")
 urls = [url for url in urls if re.search(pattern, url)]
 
 # Prüfen, ob die Datei bereits existiert
-if os.path.exists("data/pokemon_typen.json"):
-    with open("data/pokemon_typen.json", "r", encoding="utf-8") as file:
+if os.path.exists("../data/pokemon_typen.json"):
+    with open("../data/pokemon_typen.json", "r", encoding="utf-8") as file:
         try:
             existing_data = json.load(file)
             if not isinstance(existing_data, list):
@@ -78,7 +78,7 @@ for url in urls:
     description = "\\n".join(paragraphs) if paragraphs else "Keine Beschreibung gefunden"
 
     # **Vorlage aus typ.json laden**
-    with open("data_templates/typ.json", "r", encoding="utf-8") as f:
+    with open("../data/data_templates/typ.json", "r", encoding="utf-8") as f:
         template_list = json.load(f)
 
     template = template_list[0]  # Erstes Element der Liste verwenden
@@ -91,7 +91,8 @@ for url in urls:
     existing_data.append(template)
 
 # Daten als JSON speichern
-with open("data/pokemon_typen.json", "w", encoding="utf-8") as file:
+with open("../data/output/pokemon_typen.json", "w", encoding="utf-8") as file:
     json.dump(existing_data, file, ensure_ascii=False, indent=4)
+
 
 print("Scraping abgeschlossen! Daten wurden in data/pokemon_typen.json gespeichert und erweitert.")
