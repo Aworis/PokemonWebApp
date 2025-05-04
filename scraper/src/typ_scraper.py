@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 from scraper.src.config_loader import load_sitemap_url
 from scraper.src.file_io import write_json, fetch_json_data
+from scraper.src.scraper_utils import fetch_sitemap_xml, extract_matching_urls
 
 # Die URL extrahieren, wenn "typ" = "typen"
 SITEMAP_URL = load_sitemap_url("typen")
@@ -18,23 +19,13 @@ else:
     exit()
 
 # Sitemap abrufen
-response = requests.get(SITEMAP_URL)
-if response.status_code != 200:
-    print("Fehler beim Abrufen der Sitemap")
-    exit()
+root = fetch_sitemap_xml(SITEMAP_URL)
 
-# XML parsen
-root = ET.fromstring(response.content)
-namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
 
-# Typenseiten extrahieren
-urls = [elem.text for elem in root.findall(f".//{namespace}loc")]
 
-# Muster für URLs: müssen mit "typendex/" beginnen und mit ".php" enden
-pattern = re.compile(r"typendex/[\w-]+\.php$")
 
 # Gefilterte URLs extrahieren
-urls = [url for url in urls if re.search(pattern, url)]
+urls = extract_matching_urls(root, r"typendex/[\w-]+\.php$")
 
 
 
