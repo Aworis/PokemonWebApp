@@ -7,6 +7,12 @@ from scraper.src.scraper_utils import extract_matching_urls, fetch_url_content
 # Die URL extrahieren, wenn "typ" = "typen"
 SITEMAP_URL = load_sitemap_url("typen")
 
+#TODO: Logging implementieren
+#import logging
+#logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+#logging.info("Sitemap-URL gefunden: %s", SITEMAP_URL)
+#logging.warning("Keine passende Sitemap-URL gefunden.")
+
 # Überprüfung der extrahierten URL
 if SITEMAP_URL:
     print(f"Sitemap-URL gefunden: {SITEMAP_URL}")
