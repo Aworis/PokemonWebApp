@@ -3,9 +3,9 @@ import requests
 import xml.etree.ElementTree as ET
 import json
 from bs4 import BeautifulSoup
-import os
 
 from scraper.src.config_loader import load_sitemap_url
+from scraper.src.file_io import write_json, fetch_json_data
 
 # Die URL extrahieren, wenn "typ" = "typen"
 SITEMAP_URL = load_sitemap_url("typen")
@@ -36,17 +36,16 @@ pattern = re.compile(r"typendex/[\w-]+\.php$")
 # Gefilterte URLs extrahieren
 urls = [url for url in urls if re.search(pattern, url)]
 
-# Prüfen, ob die Datei bereits existiert
-if os.path.exists("../data/pokemon_typen.json"):
-    with open("../data/pokemon_typen.json", "r", encoding="utf-8") as file:
-        try:
-            existing_data = json.load(file)
-            if not isinstance(existing_data, list):
-                existing_data = [existing_data]
-        except json.JSONDecodeError:
-            existing_data = []  # Falls die Datei leer oder fehlerhaft ist
-else:
-    existing_data = []  # Falls die Datei noch nicht existiert
+
+
+
+
+
+# hole daten aus json oder initialisiere json
+existing_data = fetch_json_data("../data/output/pokemon_typen.json")
+
+
+
 
 # Daten sammeln
 for url in urls:
@@ -88,9 +87,9 @@ for url in urls:
     # Daten zur Liste hinzufügen
     existing_data.append(template)
 
-# Daten als JSON speichern
-with open("../data/output/pokemon_typen.json", "w", encoding="utf-8") as file:
-    json.dump(existing_data, file, ensure_ascii=False, indent=4)
+
+
+write_json("../data/output/pokemon_typen.json", existing_data)
 
 
 print("Scraping abgeschlossen! Daten wurden in data/pokemon_typen.json gespeichert und erweitert.")
