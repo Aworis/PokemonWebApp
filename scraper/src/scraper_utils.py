@@ -3,10 +3,10 @@ import xml.etree.ElementTree as ET
 import re
 
 
-def fetch_sitemap_xml(url: str) -> ET.Element:
+def fetch_url_content(url: str) -> str:
     response = requests.get(url)
     response.raise_for_status()
-    return ET.fromstring(response.content)
+    return response.content.decode("utf-8")
 
 def extract_matching_urls(xml_root: ET.Element, pattern: str) -> list:
     namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"

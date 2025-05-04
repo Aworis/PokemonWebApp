@@ -3,10 +3,9 @@ import requests
 import xml.etree.ElementTree as ET
 import json
 from bs4 import BeautifulSoup
-
 from scraper.src.config_loader import load_sitemap_url
 from scraper.src.file_io import write_json, fetch_json_data
-from scraper.src.scraper_utils import fetch_sitemap_xml, extract_matching_urls
+from scraper.src.scraper_utils import extract_matching_urls, fetch_url_content
 
 # Die URL extrahieren, wenn "typ" = "typen"
 SITEMAP_URL = load_sitemap_url("typen")
@@ -19,18 +18,11 @@ else:
     exit()
 
 # Sitemap abrufen
-root = fetch_sitemap_xml(SITEMAP_URL)
 
-
-
+root = ET.fromstring(fetch_url_content(SITEMAP_URL))
 
 # Gefilterte URLs extrahieren
 urls = extract_matching_urls(root, r"typendex/[\w-]+\.php$")
-
-
-
-
-
 
 # hole daten aus json oder initialisiere json
 existing_data = fetch_json_data("../data/output/pokemon_typen.json")
@@ -38,15 +30,17 @@ existing_data = fetch_json_data("../data/output/pokemon_typen.json")
 
 
 
+
+
+
 # Daten sammeln
 for url in urls:
     print(f"Scrape: {url}")
-    response = requests.get(url)
-    if response.status_code != 200:
-        print(f"Fehler beim Abrufen von {url}")
-        continue
 
-    soup = BeautifulSoup(response.text, "html.parser")
+
+    content = fetch_url_content(url)
+
+    soup = BeautifulSoup(content, "html.parser")
 
     # Name des Typs extrahieren
     name_tag = soup.find("h1")  # Annahme: Name steht in <h1>
@@ -80,7 +74,9 @@ for url in urls:
 
 
 
-write_json("../data/output/pokemon_typen.json", existing_data)
 
+
+
+write_json("../data/output/pokemon_typen.json", existing_data)
 
 print("Scraping abgeschlossen! Daten wurden in data/pokemon_typen.json gespeichert und erweitert.")
