@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+
 def setup_logging(log_file: str = "logs/app.log") -> None:
     log_path = Path(log_file)
     log_path.parent.mkdir(parents=True, exist_ok=True)  # Ordner erstellen, falls nicht da
