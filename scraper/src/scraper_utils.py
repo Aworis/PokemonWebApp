@@ -1,6 +1,9 @@
-import requests
-import xml.etree.ElementTree as ET
 import re
+import xml.etree.ElementTree as ET
+
+import requests
+
+
 #TODO: Datei umbenennen in web_scraper_helpers.py, weil Hilfsfunktionen?
 
 #TODO: Exception Handling, try-except für requests.get(url) implementieren

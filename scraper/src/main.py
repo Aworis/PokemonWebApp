@@ -1,5 +1,6 @@
-from utils.log_config import setup_logging
 import subprocess
+
+from utils.log_config import setup_logging
 
 setup_logging()
 
