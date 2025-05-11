@@ -3,12 +3,17 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
 from scraper.src.config_loader import load_sitemap_url
+from scraper.src.utils.log_config import setup_logging
 from scraper.src.utils.scraper_utils import extract_matching_urls, fetch_url_content
 from scraper.src.utils.file_io import write_json, load_json_data
+
+setup_logging()
+
 
 # Die URL extrahieren, wenn "typ" = "typen"
 SITEMAP_URL = load_sitemap_url("typen")
 
+#Todo: Sessions implementieren
 #TODO: Logging implementieren
 #import logging
 #logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
