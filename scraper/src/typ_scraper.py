@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from scraper.src.config_loader import load_sitemap_url
-from scraper.src.file_io import write_json, load_json_data
+from scraper.src.utils.file_io import write_json, load_json_data
 from scraper.src.scraper_utils import extract_matching_urls, fetch_url_content
 
 # Die URL extrahieren, wenn "typ" = "typen"
@@ -29,7 +29,7 @@ urls = extract_matching_urls(root, r"typendex/[\w-]+\.php$")
 # hole daten aus json oder initialisiere json
 existing_data = load_json_data("../data/output/pokemon_typen.json")
 
-# Daten sammeln. Speziel, je nach Scraper
+# Daten sammeln. Speziell, je nach Scraper
 for url in urls:
     print(f"Scrape: {url}")
     content = fetch_url_content(url)
