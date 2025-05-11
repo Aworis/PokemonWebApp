@@ -9,7 +9,7 @@ def setup_logging(log_file: str = "logs/app.log") -> None:
         level=logging.INFO, # Niedrigstes Log-Level
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         handlers=[
-            #TODO: Loggin in app.log fnuktioniert noch nicht
+            #TODO: Logging in app.log funktioniert noch nicht
             logging.FileHandler(log_path, encoding="utf-8"),
             logging.StreamHandler()
         ]

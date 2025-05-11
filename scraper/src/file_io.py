@@ -1,14 +1,13 @@
 import os
 import json
 
-#TODO: Umbenennen in save_to_json?
+
 def write_json(path: str, data) -> None:
     with open(path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
 #TODO: Statt prints nutzen, Logging implementieren. Außerdem jsonlines nutzen und Path statt ao.path?
-#TODO: Umbenennen in read_json_file?
 #import jsonlines
 #def fetch_json_data(path: str) -> list:
 #    data = []
@@ -33,7 +32,7 @@ def write_json(path: str, data) -> None:
 #    logging.info("Datei %s existiert nicht.", path)
 #    return []
 
-def fetch_json_data(path: str) -> list:
+def load_json_data(path: str) -> list:
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as file:
             try:

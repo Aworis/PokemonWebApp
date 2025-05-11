@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from scraper.src.config_loader import load_sitemap_url
-from scraper.src.file_io import write_json, fetch_json_data
+from scraper.src.file_io import write_json, load_json_data
 from scraper.src.scraper_utils import extract_matching_urls, fetch_url_content
 
 # Die URL extrahieren, wenn "typ" = "typen"
@@ -27,7 +27,7 @@ root = ET.fromstring(fetch_url_content(SITEMAP_URL))
 urls = extract_matching_urls(root, r"typendex/[\w-]+\.php$")
 
 # hole daten aus json oder initialisiere json
-existing_data = fetch_json_data("../data/output/pokemon_typen.json")
+existing_data = load_json_data("../data/output/pokemon_typen.json")
 
 # Daten sammeln. Speziel, je nach Scraper
 for url in urls:
@@ -52,7 +52,7 @@ for url in urls:
     description = "\\n".join(paragraphs) if paragraphs else "Keine Beschreibung gefunden"
 
     # **Vorlage aus typ.json laden**
-    template = fetch_json_data("../data/data_templates/typ.json")[0]
+    template = load_json_data("../data/data_templates/typ.json")[0]
 
     template.update({"name": name,
                      "beschreibung": description})
