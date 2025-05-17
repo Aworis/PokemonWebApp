@@ -1,37 +1,32 @@
 import xml.etree.ElementTree as ET
+import logging
 
 from bs4 import BeautifulSoup
 
 from scraper.src.config_loader import load_sitemap_url
-from scraper.src.utils.log_config import setup_logging
 from scraper.src.utils.scraper_utils import extract_matching_urls, fetch_url_content
 from scraper.src.utils.file_io import write_json, load_json_data
 
-setup_logging()
-
-
-# Die URL extrahieren, wenn "typ" = "typen"
-SITEMAP_URL = load_sitemap_url("typen")
 
 #Todo: Sessions implementieren
 #TODO: Logging implementieren
-#import logging
-#logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-#logging.info("Sitemap-URL gefunden: %s", SITEMAP_URL)
-#logging.warning("Keine passende Sitemap-URL gefunden.")
 
-# Überprüfung der extrahierten URL
+# Die URL extrahieren, wenn "typ" = "typen"
+SITEMAP_URL = load_sitemap_url("typen")
 if SITEMAP_URL:
-    print(f"Sitemap-URL gefunden: {SITEMAP_URL}")
-else:
-    print("Keine passende Sitemap-URL gefunden.")
-    exit()
+    logging.info(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")
 
 # Sitemap abrufen
-root = ET.fromstring(fetch_url_content(SITEMAP_URL))
+parsed_sitemap = ET.fromstring(fetch_url_content(SITEMAP_URL))
+if parsed_sitemap:
+    logging.info("XML-Dokument wurde erfolgreich geparst.")
 
 # Gefilterte URLs extrahieren
-urls = extract_matching_urls(root, r"typendex/[\w-]+\.php$")
+urls = extract_matching_urls(parsed_sitemap, r"typendex/[\w-]+\.php$")
+if urls:
+    logging.info(f"{len(urls)} URLs aus Sitemap extrahiert.")
+
+
 
 # hole daten aus json oder initialisiere json
 existing_data = load_json_data("../data/output/pokemon_typen.json") or []
