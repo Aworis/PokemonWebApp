@@ -3,9 +3,17 @@ import logging
 from pathlib import Path
 
 
+logging.basicConfig(level=logging.INFO)
+
 def write_json(path: str, data) -> None:
-    with open(path, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)
+    try:
+        with open(path, "w", encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
+        logging.info(f"JSON-Datei erfolgreich geschrieben: {path}")
+    except OSError as e:
+        logging.error(f"Fehler beim Schreiben der Datei {path}: {e}")
+    except json.JSONDecodeError as e:
+        logging.error(f"Fehler beim Serialisieren der Daten: {e}")
 
 
 def load_json_data(path: str) -> list | None:
