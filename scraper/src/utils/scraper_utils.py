@@ -28,18 +28,20 @@ def fetch_url_content(url: str) -> str | None:
         return None
 
 
-def extract_matching_urls(xml_root: ET.Element, pattern: str) -> set | None:
+def extract_matching_urls(xml_root: ET.Element, compiled_pattern: re.Pattern) -> list | None:
     try:
         namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
-        compiled_pattern = re.compile(pattern)
+        urls = [elem.text for elem in xml_root.findall(f".//{namespace}loc") if elem.text]
 
-        urls = {elem.text for elem in xml_root.findall(f".//{namespace}loc") if elem.text}
-        return {url for url in urls if compiled_pattern.search(url)}
+        matching_urls = [url for url in urls if compiled_pattern.search(url)]
+
+        logging.info(f"{len(matching_urls)} passende URLs gefunden.")
+        return matching_urls
 
     except AttributeError as e:
-        logging.error(f"Fehlerhafte XML-Struktur in 'xml_root': {e}")
-        return set()
+        logging.error(f"Fehlerhafte XML-Struktur: {e}")
+        return []
 
     except Exception as e:
         logging.error(f"Unerwarteter Fehler beim Extrahieren von URLs: {e}")
-        return set()
+        return []
