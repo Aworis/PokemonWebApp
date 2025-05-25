@@ -1,70 +1,44 @@
 import xml.etree.ElementTree as ET
-import logging
 import re
-import requests
+from abstract_web_scraper import WebScraper
 
+import logging
 from bs4 import BeautifulSoup
+from config_loader import load_sitemap_url
+from utils.scraper_utils import extract_matching_urls, fetch_url_content
+from utils.file_io import write_json, load_json_data
 
-from utils.log_config import setup_logging
-from scraper.src.config_loader import load_sitemap_url
-from scraper.src.utils.scraper_utils import extract_matching_urls, fetch_url_content
-from scraper.src.utils.file_io import write_json, load_json_data
-
-#TODO Logging funktioniert hier nicht. Muss ich noch einmal komplett richtig machen. Best Practices?
-setup_logging()
-logging.info("Logging erfolgreich eingerichtet!")
+logger = logging.getLogger(__name__)
 
 
-#Todo: Sessions implementieren
+class TypScraper(WebScraper):
+    def parse_data(self):
+        """Parst die Seite und extrahiert die relevanten Daten."""
+        if not self.page_content:
+            raise Exception("No page content available. Fetch the page first.")
 
-# Die URL extrahieren, wenn "typ" = "typen"
-SITEMAP_URL = load_sitemap_url("typen")
-if SITEMAP_URL:
-    logging.info(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")
-else:
-    logging.warning("Sitemap konnte nicht geladen werden.")
+        soup = BeautifulSoup(self.page_content, 'html.parser')
 
-# Sitemap abrufen
-parsed_sitemap = ET.fromstring(fetch_url_content(SITEMAP_URL))
-if parsed_sitemap:
-    logging.info("XML-Dokument wurde erfolgreich geparst.")
+        # Beispiel: Extrahieren von Titeln und Links
+        titles = soup.find_all('h2', class_='article-title')  # Angenommene Struktur
+        data = []
+        for title in titles:
+            data.append(title.get_text())
 
-# Gefilterte URLs extrahieren
-pattern = re.compile(r"typendex/[\w-]+\.php$")
-urls = extract_matching_urls(parsed_sitemap, pattern)
-if urls:
-    logging.info(f"{len(urls)} URLs aus Sitemap extrahiert.")
-else:
-    logging.warning("Keine URLs in der Sitemap gefunden.")
+        return data
 
+# Funktion zum Abrufen der Seite mit verbesserter Fehlerbehandlung und Retry-Mechanismus
+# hier die methode fetch_page implementieren von abstract_web_scaper.py
 
-
-# hole daten aus json oder initialisiere json
-pokemon_type_data = []
-
-
-session = requests.Session()
-
-
-# Daten sammeln. Speziell, je nach Scraper
-for url in urls:
-    logging.info(f"Scraping {url} gestartet...")
-
-    content = session.get(url).text
-    if not content:
-        logging.error(f"Fehler: Kein Content für {url} erhalten.")
-        continue  # Überspringe diese URL
-
-    soup = BeautifulSoup(content, "html.parser")
-
-    # Name des Typen in <h1>
+# Extrahiert die Daten für den Pokemon-Typ
+def extract_type_data(soup):
+    # Name des Typs in <h1>
     name_tag = soup.find("h1")
     name = name_tag.text.strip() if name_tag else "Unbekannt"
 
     # Beschreibung des Typs in allen <p> zwischen <h1> und <h3>
-    start_tag = soup.find("h1")
     paragraphs = []
-    current = start_tag.find_next_sibling()
+    current = name_tag.find_next_sibling()
 
     while current and current.name != "h3":
         if current.name == "p":
@@ -72,21 +46,62 @@ for url in urls:
         current = current.find_next_sibling()
 
     description = "\\n".join(paragraphs) if paragraphs else "Keine Beschreibung gefunden"
+    return name, description
 
-    # **Vorlage aus typ.json laden**
-    template = load_json_data("../data/data_templates/typ.json")[0]
+# Hauptfunktion
+def run():
+    logger.info("Logging erfolgreich eingerichtet!")
 
-    template.update({"name": name,
-                     "beschreibung": description})
+    # Die URL extrahieren, wenn "typ" = "typen"
+    SITEMAP_URL = load_sitemap_url("typen")
+    if SITEMAP_URL:
+        logger.info(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")
+    else:
+        logger.warning("Sitemap konnte nicht geladen werden.")
+        return
 
-    #Generator erzeugen?
-    # Daten zur Liste hinzufügen
-    pokemon_type_data.append(template)
+    # Sitemap abrufen und validieren
+    try:
+        parsed_sitemap = ET.fromstring(fetch_url_content(SITEMAP_URL))
+        logger.info("XML-Dokument wurde erfolgreich geparst.")
+    except Exception as e:
+        logger.error(f"Fehler beim Parsen der Sitemap: {e}")
+        return
 
-    logging.info(f"Scraping {url} abgeschlossen.")
+    # Gefilterte URLs extrahieren
+    pattern = re.compile(r"typendex/[\w-]+\.php$")
+    urls = extract_matching_urls(parsed_sitemap, pattern)
+    if urls:
+        logger.info(f"{len(urls)} URLs aus Sitemap extrahiert.")
+    else:
+        logger.warning("Keine URLs in der Sitemap gefunden.")
+        return
 
+    pokemon_type_data = []
 
+    # Session verwenden
+    with requests.Session() as session:
+        for idx, url in enumerate(urls, 1):
+            logger.info(f"Verarbeite {idx}/{len(urls)}: {url}")
+            content = fetch_page(session, url)
+            if not content:
+                continue
 
-write_json("../data/output/pokemon_typen.json", pokemon_type_data)
+            soup = BeautifulSoup(content, "html.parser")
+            name, description = extract_type_data(soup)
 
-logging.info("Scraping abgeschlossen! Daten wurden in data/pokemon_typen.json gespeichert und erweitert.")
+            # Vorlage aus typ.json laden und anpassen
+            template = load_json_data("../data/data_templates/typ.json")[0]
+            template.update({"name": name, "beschreibung": description})
+
+            pokemon_type_data.append(template)
+            logger.info(f"Scraping {url} abgeschlossen.")
+
+    # Daten aus der existierenden JSON-Datei laden und erweitern
+    existing_data = load_json_data("/workspaces/dev/PokemonWebApp-dev-typ-scraper/scraper/data/data_templates/typ.json") or []
+    existing_data.extend(pokemon_type_data)
+
+    # Die erweiterten Daten in die JSON-Datei schreiben
+    write_json("../data/output/pokemon_typen.json", existing_data)
+
+    logger.info("Scraping abgeschlossen! Daten wurden in data/pokemon_typen.json gespeichert und erweitert.")

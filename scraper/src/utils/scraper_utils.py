@@ -1,9 +1,11 @@
-import logging
+
 import re
 import xml.etree.ElementTree as ET
 
 import requests
 
+import logging
+logger = logging.getLogger(__name__)
 
 def fetch_url_content(url: str) -> str | None:
     try:
@@ -12,19 +14,19 @@ def fetch_url_content(url: str) -> str | None:
         return response.content.decode("utf-8")
 
     except requests.exceptions.Timeout:
-        logging.error(f"Timeout-Fehler: Server hat nicht innerhalb von 10 Sekunden auf {url} geantwortet.")
+        logger.error(f"Timeout-Fehler: Server hat nicht innerhalb von 10 Sekunden auf {url} geantwortet.")
         return None
 
     except requests.exceptions.HTTPError as e:
-        logging.error(f"HTTP-Fehler {response.status_code} beim Abrufen von {url}: {e}")
+        logger.error(f"HTTP-Fehler {response.status_code} beim Abrufen von {url}: {e}")
         return None
 
     except requests.exceptions.ConnectionError:
-        logging.error(f"Verbindungsfehler: Keine Verbindung zu {url} möglich.")
+        logger.error(f"Verbindungsfehler: Keine Verbindung zu {url} möglich.")
         return None
 
     except requests.exceptions.RequestException as e:
-        logging.error(f"Fehler beim Abrufen von {url}: {e}")
+        logger.error(f"Fehler beim Abrufen von {url}: {e}")
         return None
 
 
@@ -35,13 +37,13 @@ def extract_matching_urls(xml_root: ET.Element, compiled_pattern: re.Pattern) ->
 
         matching_urls = [url for url in urls if compiled_pattern.search(url)]
 
-        logging.info(f"{len(matching_urls)} passende URLs gefunden.")
+        logger.info(f"{len(matching_urls)} passende URLs gefunden.")
         return matching_urls
 
     except AttributeError as e:
-        logging.error(f"Fehlerhafte XML-Struktur: {e}")
+        logger.error(f"Fehlerhafte XML-Struktur: {e}")
         return []
 
     except Exception as e:
-        logging.error(f"Unerwarteter Fehler beim Extrahieren von URLs: {e}")
+        logger.error(f"Unerwarteter Fehler beim Extrahieren von URLs: {e}")
         return []

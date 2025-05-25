@@ -9,11 +9,11 @@ def write_json(path: str, data) -> None:
     try:
         with open(path, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
-        logging.info(f"JSON-Datei erfolgreich geschrieben: {path}")
+        logger.info(f"JSON-Datei erfolgreich geschrieben: {path}")
     except OSError as e:
-        logging.error(f"Fehler beim Schreiben der Datei {path}: {e}")
+        logger.error(f"Fehler beim Schreiben der Datei {path}: {e}")
     except json.JSONDecodeError as e:
-        logging.error(f"Fehler beim Serialisieren der Daten: {e}")
+        logger.error(f"Fehler beim Serialisieren der Daten: {e}")
 
 
 def load_json_data(path: str) -> list | None:
@@ -26,8 +26,8 @@ def load_json_data(path: str) -> list | None:
                 return data if isinstance(data, list) else [data]
 
             except json.JSONDecodeError:
-                logging.warning("Fehlerhaftes JSON in %s.", path)
+                logger.warning("Fehlerhaftes JSON in %s.", path)
                 return None
 
-    logging.warning("Die Datei '%s' wurde nicht gefunden.", path)
+    logger.warning("Die Datei '%s' wurde nicht gefunden.", path)
     return None

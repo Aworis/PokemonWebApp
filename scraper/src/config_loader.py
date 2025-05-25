@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 
+logger = logging.getLogger(__name__)
+
 def load_sitemap_url(typ_name: str) -> Optional[str]:
     json_name = "urls.json"
     config_path = Path(__file__).parent.parent / "config" / json_name
@@ -14,5 +16,5 @@ def load_sitemap_url(typ_name: str) -> Optional[str]:
         return next((entry["url"] for entry in data.get("sitemaps", []) if entry.get("typ") == typ_name), None)
 
     except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
-        logging.warning(f"Fehler beim Laden der Sitemap-URL für '{typ_name}' aus {json_name}: {e}")
+        logger.warning(f"Fehler beim Laden der Sitemap-URL für '{typ_name}' aus {json_name}: {e}")
         return None
