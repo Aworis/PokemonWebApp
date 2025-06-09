@@ -1,6 +1,9 @@
-# Singleton Pattern
 import requests
+
 class ScraperManager:
+    """
+    Repräsentiert eine Singleton-Instanz zur zentralen Verwaltung von Web-Scrapern.
+    """
     _instance = None
 
     def __new__(cls):
@@ -13,7 +16,6 @@ class ScraperManager:
             self.initialized = True
             self.scrapers = []
             self.session = requests.Session()
-            # Hier können andere Initialisierungen erfolgen, die nur einmal gemacht werden müssen.
 
     def add_scraper(self, scraper, url):
         scraper = scraper(url, session=self.session)
@@ -21,11 +23,7 @@ class ScraperManager:
 
     def run(self):
         for scraper in self.scrapers:
-            scraper.fetch_page()
+            scraper.fetch_page(scraper.session)
             data = scraper.parse_data()
             print(data)
-
-
-
-
-#Was der ScraperManager macht, muss ich noch gucken.
+            scraper.run()
