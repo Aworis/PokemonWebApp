@@ -1,36 +1,41 @@
-import requests
-from abc import ABC, abstractmethod
-from bs4 import BeautifulSoup
 import logging
 import time
+from abc import ABC, abstractmethod
 
-logger = logging.getLogger(__name__)
+import requests
+
 
 class WebScraper(ABC):
-    #TODO: Instanzvariablen anpassen. Welche brauche ich?
-    def __init__(self, url, session):
-        self.url = url
-        self.page_content = None
-        self.session = session
+    """Abstrakte Basisklasse für spezialisierten Scraper.
+    """
 
+    def __init__(self, session):
+        self._session = session
+        self._logger = logging.getLogger(__name__)
 
+    def fetch_page(self, url: str, retries: int, delay: int) -> str | None:
+        """
+        Ruft die HTML-Inhalte der angegebenen URL über die Session ab.
 
-        #TODO hier weitermachen.
-    def fetch_page(self, session, retries=3, delay=5):
-        """Lädt den Inhalt der Seite über eine Session herunter."""
+        :param str url: Die Ziel-URL, die abgerufen werden soll.
+        :param int retries: Anzahl verbleibender Wiederholungsversuche bei Fehlern.
+        :param int delay: Sekundenzahl, die vor einem erneuten Versuch gewartet wird.
+        """
+
         try:
-            response = session.get(self.url, timeout=10)
+            response = self._session.get(url, timeout = 10)
             response.raise_for_status()
-            self.page_content = response.text
+            return response.text
         except requests.RequestException as e:
             if retries > 0:
-                logger.warning(f"Fehler beim Abrufen von {self.url}. Versuche es erneut in {delay} Sekunden...")
+                self._logger.warning(f"Fehler beim Abrufen von {url}. {retries} verbleibende Versuche. Neuer Versuch in {delay} Sekunden...")
                 time.sleep(delay)
-                return self.url.fetch_page(self, session, retries-1, delay)
-            logger.error(f"Fehler beim Abrufen von {self.url}: {e}")
+                return self.fetch_page(url, retries-1, delay)
+            self._logger.error(f"Fehler beim Abrufen von {url}: {e}")
             return None
 
     @abstractmethod
-    def parse_data(self):
-        """Abstrakte Methode zum Extrahieren von Daten. Muss in Unterklassen implementiert werden."""
+    def parse_data(self, html: str) -> list[dict]:
+        """Parst den übergebenen HTML-Inhalt und extrahiert strukturierte Daten.
+        """
         pass

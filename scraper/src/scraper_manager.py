@@ -27,7 +27,7 @@ class ScraperManager:
             self.__result_handler = ScraperResultHandler()
             self.__logger = logging.getLogger(__name__)
 
-    def register_scraper(self, scraper_id: str, scraper_instance: WebScraper):
+    def register_scraper(self, scraper_id: str, scraper_instance: WebScraper) -> None:
         """Registriert einen neuen Scraper unter einer eindeutigen ID.
         Wenn bereits ein Scraper mit dieser ID existiert, wird keine neue Registrierung durchgeführt.
         """
@@ -38,9 +38,8 @@ class ScraperManager:
             self.__scrapers[scraper_id] = scraper_instance
             self.__logger.info(f"Scraper '{scraper_id}' registriert.")
 
-    def run_scraper(self, scraper_id: str):
-        """
-        Führt den angegebenen Scraper aus und verarbeitet das Ergebnis.
+    def run_scraper(self, scraper_id: str, url: str) -> None:
+        """Führt den angegebenen Scraper aus und verarbeitet das Ergebnis.
 
         Ablauf:
             - Ruft die HTML-Seite über den konkreten Scraper ab.
@@ -53,16 +52,15 @@ class ScraperManager:
             self.__logger.error(f"Scraper '{scraper_id}' nicht gefunden.")
             return
         try:
-            html = scraper.fetch_page()
+            html = scraper.fetch_page(url, retry_count = 3, retry_delay = 5)
             data = scraper.parse_data(html)
             self.__result_handler.write_to_json(data, scraper_id)
             self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
         except Exception as e:
-            self.__logger.error(f"Fehler beim Ausführen des Workflows für '{scraper_id}': {str(e)}")
+            self.__logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {str(e)}")
 
-    def run_all(self):
-        """
-        Führt alle registrierten Scraper sequenziell aus.
+    def run_all(self) -> None:
+        """Führt alle registrierten Scraper sequenziell aus.
         """
 
         completed = 0
