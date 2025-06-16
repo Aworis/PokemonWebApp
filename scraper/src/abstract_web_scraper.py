@@ -3,15 +3,17 @@ import time
 from abc import ABC, abstractmethod
 
 import requests
+from requests import Session
 
 
 class WebScraper(ABC):
     """Abstrakte Basisklasse für spezialisierten Scraper.
     """
 
-    def __init__(self, session):
+    def __init__(self, session: Session, urls: list[str]):
         self._session = session
         self._logger = logging.getLogger(__name__)
+        self.__urls = urls
 
     def fetch_page(self, url: str, retries: int, delay: int) -> str | None:
         """
