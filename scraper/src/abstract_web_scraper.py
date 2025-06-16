@@ -13,7 +13,11 @@ class WebScraper(ABC):
     def __init__(self, session: Session, urls: list[str]):
         self._session = session
         self._logger = logging.getLogger(__name__)
-        self.__urls = urls
+        self._urls = urls
+
+    @property
+    def scraper_urls(self) -> list[str]:
+        return self._urls
 
     def fetch_page(self, url: str, retries: int, delay: int) -> str | None:
         """

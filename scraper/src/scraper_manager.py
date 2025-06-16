@@ -38,12 +38,13 @@ class ScraperManager:
             self.__scrapers[scraper_id] = scraper_instance
             self.__logger.info(f"Scraper '{scraper_id}' registriert.")
 
-    def run_scraper(self, scraper_id: str, url: str) -> None:
+    def run_scraper(self, scraper_id: str) -> None:
         """Führt den angegebenen Scraper aus und verarbeitet das Ergebnis.
 
         Ablauf:
-            - Ruft die HTML-Seite über den konkreten Scraper ab.
-            - Parst die Seite zu strukturierten Daten.
+            - Ruft für jede URL im Scraper die HTML-Seite ab.
+            - Parst den Seiteninhalt zu strukturierten Daten.
+            - Fügt alle Ergebnisse in einer Liste zusammen.
             - Übergibt die Daten zur Speicherung an den Result-Handler.
         """
 
@@ -51,15 +52,20 @@ class ScraperManager:
         if not scraper:
             self.__logger.error(f"Scraper '{scraper_id}' nicht gefunden.")
             return
-        try:
-            html = scraper.fetch_page(url, retry_count = 3, retry_delay = 5)
-            data = scraper.parse_data(html)
-            self.__result_handler.write_to_json(data, scraper_id)
-            self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
-        except Exception as e:
-            self.__logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {str(e)}")
+        urls = scraper.scraper_urls
+        all_data = []
+        for url in urls:
+            self.__logger.info(f"Verarbeite URL: {url}")
+            try:
+                html = scraper.fetch_page(url, retry_count = 3, retry_delay = 5)
+                data = scraper.parse_data(html)
+                all_data.extend(data)
+            except Exception as e:
+                self.__logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {e}")
+        self.__result_handler.write_to_json(all_data, scraper_id)
+        self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
 
-    def run_all(self) -> None:
+    def run_all(self, urls: list[str]) -> None:
         """Führt alle registrierten Scraper sequenziell aus.
         """
 
