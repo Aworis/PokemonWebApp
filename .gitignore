@@ -7,3 +7,4 @@ scraper/data/output/*
 
 # logs
 scraper/src/logs/
+logs/
