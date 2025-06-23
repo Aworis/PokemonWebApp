@@ -3,6 +3,7 @@ import time
 from abc import ABC, abstractmethod
 
 import requests
+from bs4 import BeautifulSoup
 from requests import Session
 
 
@@ -40,8 +41,14 @@ class WebScraper(ABC):
             self._logger.error(f"Fehler beim Abrufen von {url}: {e}")
             return None
 
-    @abstractmethod
     def parse_data(self, html: str) -> list[dict]:
-        """Parst den übergebenen HTML-Inhalt und extrahiert strukturierte Daten.
+        """Parst den übergebenen HTML-Inhalt.
+        """
+        soup = BeautifulSoup(html, "html.parser")
+        return self._extract_data(soup)
+
+    @abstractmethod
+    def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
+        """Extrahiert strukturierte Daten.
         """
         pass
