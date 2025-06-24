@@ -1,5 +1,0 @@
-2025-05-25 15:37:45,525 [INFO] typ_scraper: Logging erfolgreich eingerichtet!
-2025-05-25 15:37:45,525 [INFO] typ_scraper: Sitemap wurde erfolgreich geladen: https://www.bisafans.de/sitemap_typendex.xml
-2025-05-25 15:37:45,727 [INFO] typ_scraper: XML-Dokument wurde erfolgreich geparst.
-2025-05-25 15:37:45,727 [INFO] utils.scraper_utils: 18 passende URLs gefunden.
-2025-05-25 15:37:45,728 [INFO] typ_scraper: 18 URLs aus Sitemap extrahiert.
