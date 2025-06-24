@@ -24,6 +24,7 @@ session = scraper_manager.session
 
 
 SITEMAP_URL = load_sitemap_url("typen")
+
 if SITEMAP_URL:
     print(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")
 else:
