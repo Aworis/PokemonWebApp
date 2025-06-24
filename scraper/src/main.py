@@ -13,9 +13,16 @@ from scraper_manager import ScraperManager
 
 
 setup_logging()
+#TODO: Hier weitermachen.
+scraper_manager = ScraperManager()
 
 
-session = requests.Session()
+session = scraper_manager.session
+
+
+
+
+
 SITEMAP_URL = load_sitemap_url("typen")
 if SITEMAP_URL:
     print(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")

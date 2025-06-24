@@ -27,6 +27,10 @@ class ScraperManager:
             self.__result_handler = ScraperResultHandler()
             self.__logger = logging.getLogger(__name__)
 
+    @property
+    def session(self):
+        return self.__session
+
     def register_scraper(self, scraper_id: str, scraper_instance: WebScraper) -> None:
         """Registriert einen neuen Scraper unter einer eindeutigen ID.
         Wenn bereits ein Scraper mit dieser ID existiert, wird keine neue Registrierung durchgeführt.
