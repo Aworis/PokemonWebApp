@@ -49,6 +49,6 @@ class WebScraper(ABC):
 
     @abstractmethod
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
-        """Extrahiert strukturierte Daten.
+        """Extrahiert je nach Scraper-Typ Daten aus HTML-Elementen.
         """
         pass
