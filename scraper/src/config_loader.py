@@ -1,20 +1,35 @@
+import yaml
 import json
 import logging
 from pathlib import Path
-from typing import Optional
 
+class ConfigLoader:
+    def __init__(self):
+        self.__logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
+    def load_sitemap_urls(self, path: str = "../config/sitemaps.yaml") -> dict[str, str] | None:
+        """Lädt alle Sitemap-URLs aus der angegebenen YAML-Datei.
+        Die Datei muss ein Dictionary enthalten, das die Sitemaps wie folgt beschreibt:
 
-def load_sitemap_url(typ_name: str) -> Optional[str]:
-    json_name = "urls.json"
-    config_path = Path(__file__).parent.parent / "config" / json_name
+        sitemaps:
+          typen: https://example.com/sitemap_typen.xml
+          news: https://example.com/sitemap_news.xml
+        """
 
-    try:
-        with config_path.open("r", encoding="utf-8") as file:
-            data = json.load(file)
-        return next((entry["url"] for entry in data.get("sitemaps", []) if entry.get("typ") == typ_name), None)
+        file = Path(path)
+        if not file.exists():
+            self.__logger.error(f"Konfigurationsdatei nicht gefunden: {path}")
+            return None
 
-    except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
-        logger.warning(f"Fehler beim Laden der Sitemap-URL für '{typ_name}' aus {json_name}: {e}")
-        return None
+        try:
+            with file.open("r", encoding="utf-8") as f:
+                config = yaml.safe_load(f) or {}
+                sitemaps = config.get("sitemaps", {})
+                if not isinstance(sitemaps, dict):
+                    self.__logger.error(f"Ungültige Struktur in {path}: 'sitemaps' muss ein Dictionary sein.")
+                    return None
+                self.__logger.info(f"{len(sitemaps)} Sitemap-URLs erfolgreich geladen aus '{path}'")
+                return sitemaps
+        except yaml.YAMLError as e:
+            self.__logger.error(f"Fehler beim Einlesen der YAML-Datei {path}: {e}")
+            return None

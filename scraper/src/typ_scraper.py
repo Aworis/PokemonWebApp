@@ -1,5 +1,4 @@
 from abstract_web_scraper import WebScraper
-from config_loader import load_sitemap_url
 import logging
 from bs4 import BeautifulSoup
 

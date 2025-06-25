@@ -2,19 +2,23 @@ import re
 import xml.etree.ElementTree as ET
 import requests
 
-from scraper.src.config_loader import load_sitemap_url
+
+from config_loader import ConfigLoader
+
+
 from scraper.src.utils.scraper_utils import fetch_url_content, extract_matching_urls
 from utils.logging_config import setup_logging
 from typ_scraper import TypScraper
 from scraper_manager import ScraperManager
 
 #TODO: logging ordner ändern auf scraping logger
-
-
-
 setup_logging()
+
+
+
 #TODO: Hier weitermachen.
 scraper_manager = ScraperManager()
+config_loader = ConfigLoader()
 
 
 session = scraper_manager.session
@@ -22,8 +26,14 @@ session = scraper_manager.session
 
 
 
+sitemaps = config_loader.load_sitemap_urls()
 
-SITEMAP_URL = load_sitemap_url("typen")
+
+
+
+
+
+SITEMAP_URL = sitemaps.get("typen")
 
 if SITEMAP_URL:
     print(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")
@@ -54,8 +64,3 @@ urls2 = typ_scraper.scraper_urls
 for url in urls2:
     html = typ_scraper.fetch_page(url,3,3)
     print(typ_scraper.parse_data(html))
-
-
-
-
-
