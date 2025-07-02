@@ -17,7 +17,7 @@ class WebScraper(ABC):
         self._urls = urls
 
     @property
-    def scraper_urls(self) -> list[str]:
+    def urls(self) -> list[str]:
         return self._urls
 
     def fetch_page(self, url: str, retries: int, delay: int) -> str | None:

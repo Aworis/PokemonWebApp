@@ -6,61 +6,37 @@ import requests
 from config_loader import ConfigLoader
 
 
-from scraper.src.utils.scraper_utils import fetch_url_content, extract_matching_urls
+from utils.scraper_utils import fetch_url_content, extract_matching_urls
 from utils.logging_config import setup_logging
 from typ_scraper import TypScraper
 from scraper_manager import ScraperManager
+from sitemap_parser import SitemapParser
 
-#TODO: logging ordner ändern auf scraping logger
+# TODO: logging ordner ändern auf scraping logger
 setup_logging()
 
-
-
-#TODO: Hier weitermachen.
+# Initialisierung der Komponenten
 scraper_manager = ScraperManager()
 config_loader = ConfigLoader()
-
-
 session = scraper_manager.session
 
-
-
-
 sitemaps = config_loader.load_sitemap_urls()
+sitemap_url = sitemaps.get("typen")
+
+sitemap_parser = SitemapParser(sitemap_url)
+sitemap_parser.load()
+
+urls = sitemap_parser.get_matching_urls(r"typendex/[\w-]+\.php$")
+print(f"{len(urls)} URLs aus Sitemap extrahiert.")
 
 
-
-
-
-
-SITEMAP_URL = sitemaps.get("typen")
-
-if SITEMAP_URL:
-    print(f"Sitemap wurde erfolgreich geladen: {SITEMAP_URL}")
-else:
-    print("Sitemap konnte nicht geladen werden.")
-
-try:
-    parsed_sitemap = ET.fromstring(fetch_url_content(SITEMAP_URL))
-    print("XML-Dokument wurde erfolgreich geparst.")
-except Exception as e:
-    print(f"Fehler beim Parsen der Sitemap: {e}")
-
-pattern = re.compile(r"typendex/[\w-]+\.php$")
-urls = extract_matching_urls(parsed_sitemap, pattern)
-if urls:
-    print(f"{len(urls)} URLs aus Sitemap extrahiert.")
-else:
-    print("Keine URLs in der Sitemap gefunden.")
-
-for element in urls:
-    print(element)
-
-
+# Beispiel für die Verwendung des TypScraper
 typ_scraper = TypScraper(session, urls)
 
-urls2 = typ_scraper.scraper_urls
+for url in typ_scraper.urls:
+        html = typ_scraper.fetch_page(url, 3, 3)
+        if html:
+            data = typ_scraper.parse_data(html)
+            print(data)
 
-for url in urls2:
-    html = typ_scraper.fetch_page(url,3,3)
-    print(typ_scraper.parse_data(html))
+# TODO: Gesammelten Daten speichern und nicht printen
