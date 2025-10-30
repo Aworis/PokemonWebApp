@@ -2,12 +2,13 @@ import logging
 
 import requests
 
-from abstract_web_scraper import WebScraper
-from scraper_result_handler import ScraperResultHandler
+from scraper.src.utils.file_io import store_scraper_output
+from scraper_factory import ScraperFactory
 
 
 class ScraperManager:
-    """Singleton-Klasse zur zentralen Verwaltung und Steuerung von Web-Scrapern.
+    """
+    Singleton-Klasse zur zentralen Verwaltung und Steuerung von Web-Scrapern.
     Stellt eine gemeinsame HTTP-Session zur Verfügung.
     """
 
@@ -24,26 +25,32 @@ class ScraperManager:
             ScraperManager.__initialized = True  # Flag wird gesetzt. Verhindert erneuter Aufruf von __init__
             self.__scrapers = {}
             self.__session = requests.Session()
-            self.__result_handler = ScraperResultHandler()
+            self.__scraper_factory = ScraperFactory()
             self.__logger = logging.getLogger(__name__)
 
     @property
     def session(self):
         return self.__session
 
-    def register_scraper(self, scraper_id: str, scraper_instance: WebScraper) -> None:
-        """Registriert einen neuen Scraper unter einer eindeutigen ID.
+    def register_scraper(self, scraper_id: str, urls: list[str]) -> None:
+        """
+        Registriert einen neuen Scraper unter einer eindeutigen ID.
         Wenn bereits ein Scraper mit dieser ID existiert, wird keine neue Registrierung durchgeführt.
         """
 
         if scraper_id in self.__scrapers:
             self.__logger.info(f"Scraper '{scraper_id}' ist bereits registriert.")
         else:
-            self.__scrapers[scraper_id] = scraper_instance
+            self.__scrapers[scraper_id] = self.__scraper_factory.create_scraper(scraper_id, self.__session, urls)
             self.__logger.info(f"Scraper '{scraper_id}' registriert.")
 
+
+
+
+
     def run_scraper(self, scraper_id: str) -> None:
-        """Führt den angegebenen Scraper aus und verarbeitet das Ergebnis.
+        """
+        Führt den angegebenen Scraper aus und verarbeitet das Ergebnis.
 
         Ablauf:
             - Ruft für jede URL im Scraper die HTML-Seite ab.
@@ -56,21 +63,26 @@ class ScraperManager:
         if not scraper:
             self.__logger.error(f"Scraper '{scraper_id}' nicht gefunden.")
             return
-        urls = scraper.scraper_urls
+        urls = scraper.urls
         all_data = []
         for url in urls:
             self.__logger.info(f"Verarbeite URL: {url}")
             try:
-                html = scraper.fetch_page(url, retry_count = 3, retry_delay = 5)
+                retry_count = 3
+                retry_delay = 5
+                html = scraper.fetch_page(url, retry_count, retry_delay)
                 data = scraper.parse_data(html)
                 all_data.extend(data)
+
             except Exception as e:
                 self.__logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {e}")
-        self.__result_handler.write_to_json(all_data, scraper_id)
+
+        store_scraper_output(all_data, scraper_id)
         self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
 
     def run_all(self, urls: list[str]) -> None:
-        """Führt alle registrierten Scraper sequenziell aus.
+        """
+        Führt alle registrierten Scraper sequenziell aus.
         """
 
         completed = 0
