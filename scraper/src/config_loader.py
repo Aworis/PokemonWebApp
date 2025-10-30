@@ -1,5 +1,4 @@
 import yaml
-import json
 import logging
 from pathlib import Path
 
@@ -8,7 +7,8 @@ class ConfigLoader:
         self.__logger = logging.getLogger(__name__)
 
     def load_sitemap_urls(self, path: str = "../config/sitemaps.yaml") -> dict[str, str] | None:
-        """Lädt alle Sitemap-URLs aus der angegebenen YAML-Datei.
+        """
+        Lädt alle Sitemap-URLs aus der angegebenen YAML-Datei.
         Die Datei muss ein Dictionary enthalten, das die Sitemaps wie folgt beschreibt:
 
         sitemaps:

@@ -8,7 +8,8 @@ from requests import Session
 
 
 class WebScraper(ABC):
-    """Abstrakte Basisklasse für spezialisierten Scraper.
+    """
+    Abstrakte Basisklasse für spezialisierten Scraper.
     """
 
     def __init__(self, session: Session, urls: list[str]):
@@ -42,13 +43,15 @@ class WebScraper(ABC):
             return None
 
     def parse_data(self, html: str) -> list[dict]:
-        """Parst den übergebenen HTML-Inhalt.
+        """
+        Parst den übergebenen HTML-Inhalt.
         """
         soup = BeautifulSoup(html, "html.parser")
         return self._extract_data(soup)
 
     @abstractmethod
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
-        """Extrahiert je nach Scraper-Typ Daten aus HTML-Elementen.
+        """
+        Extrahiert je nach Scraper-Typ Daten aus HTML-Elementen.
         """
         pass
