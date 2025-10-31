@@ -11,6 +11,7 @@ def fetch_url_content(url: str) -> str | None:
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
+        #Für bisafans.de genügt UTF-8. Automatische Encoding-Erkennung nicht nötig.
         return response.content.decode("utf-8")
 
     except requests.exceptions.Timeout:
