@@ -66,10 +66,13 @@ class ScraperManager:
 
         self.__logger.info(f"Scraper '{scraper_id}' startet.")
         urls = scraper.urls
+        number_urls = len(urls)
+        counter = 0
         all_data = []
 
         for url in urls:
-            self.__logger.info(f"Verarbeite URL: {url}")
+            counter += 1
+            self.__logger.info(f"Verarbeite URL [{counter}/{number_urls}]: {url}")
             try:
                 retry_count = 3
                 retry_delay = 5

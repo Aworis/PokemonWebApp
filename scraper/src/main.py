@@ -27,6 +27,4 @@ for key in sitemaps:
 
     scraper_manager.register_scraper(key, urls)
 
-
-#scraper_manager.run_scraper("typendex")
 scraper_manager.run_all()
