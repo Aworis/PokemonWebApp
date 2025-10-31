@@ -48,10 +48,6 @@ class ScraperManager:
             except ValueError as e:
                 self.__logger.warning(f"Scraper vom Typ '{scraper_id}' wurde nicht registriert.")
 
-
-
-
-
     def run_scraper(self, scraper_id: str) -> None:
         """
         Führt den angegebenen Scraper aus und verarbeitet das Ergebnis.
@@ -67,8 +63,11 @@ class ScraperManager:
         if not scraper:
             self.__logger.error(f"Scraper '{scraper_id}' nicht gefunden.")
             return
+
+        self.__logger.info(f"Scraper '{scraper_id}' startet.")
         urls = scraper.urls
         all_data = []
+
         for url in urls:
             self.__logger.info(f"Verarbeite URL: {url}")
             try:
@@ -84,7 +83,7 @@ class ScraperManager:
         store_scraper_output(all_data, scraper_id)
         self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
 
-    def run_all(self, urls: list[str]) -> None:
+    def run_all(self) -> None:
         """
         Führt alle registrierten Scraper sequenziell aus.
         """
@@ -92,7 +91,6 @@ class ScraperManager:
         completed = 0
         total_scrapers = len(self.__scrapers)
         for scraper_id in self.__scrapers:
-            self.__logger.info(f"Starte Scraper '{scraper_id}'...")
             try:
                 self.run_scraper(scraper_id)
                 completed += 1

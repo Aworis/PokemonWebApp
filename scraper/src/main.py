@@ -18,28 +18,11 @@ sitemap_parser = SitemapParser(sitemap_url)
 sitemap_parser.load()
 
 urls = sitemap_parser.get_matching_urls(r"typendex/[\w-]+\.php$")
-print(f"{len(urls)} URLs aus Sitemap extrahiert.")
 
 for key in sitemaps:
-    print(f"Schlüssel: {key}, Wert: {sitemaps[key]}")
     scraper = 0
     scraper_manager.register_scraper(key, urls)
 
 
-# TODO: run all fertig implemeniteren.
-scraper_manager.run_scraper("typendex")
-
-
-
-
-
-
-# Beispiel für die Verwendung des TypScraper
-# typ_scraper = TypScraper(session, urls)
-
-
-#for url in scraper_manager. typ_scraper.urls:
-#        html = typ_scraper.fetch_page(url, 3, 3)
-#        if html:
-#            data = typ_scraper.parse_data(html)
-#            print(data)
+#scraper_manager.run_scraper("typendex")
+scraper_manager.run_all()
