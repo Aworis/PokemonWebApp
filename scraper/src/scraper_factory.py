@@ -1,11 +1,17 @@
+from scraper.src.abstract_web_scraper import WebScraper
 from typ_scraper import TypScraper
 from requests import Session
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ScraperFactory:
     @staticmethod
-    def create_scraper(scraper_type: str, session: Session, urls: list[str]):
+    def create_scraper(scraper_type: str, session: Session, urls: list[str]) -> WebScraper:
         if scraper_type == "typendex":
             return TypScraper(session, urls)
         else:
-            #raise ValueError(f"Unknown scraper type: {scraper_type}")
-            return
+            message = (f"Unbekannter Scraper-Typ '{scraper_type}'. "
+                       "Kein Scraper erzeugt. Bitte überprüfe die Konfiguration.")
+            logger.warning(message)
+            raise ValueError(message)

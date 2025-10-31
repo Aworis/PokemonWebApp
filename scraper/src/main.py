@@ -26,7 +26,7 @@ for key in sitemaps:
     scraper_manager.register_scraper(key, urls)
 
 
-
+# TODO: run all fertig implemeniteren.
 scraper_manager.run_scraper("typendex")
 
 
@@ -43,5 +43,3 @@ scraper_manager.run_scraper("typendex")
 #        if html:
 #            data = typ_scraper.parse_data(html)
 #            print(data)
-
-# TODO: Gesammelten Daten speichern und nicht printen

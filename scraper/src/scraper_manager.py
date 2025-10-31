@@ -41,8 +41,12 @@ class ScraperManager:
         if scraper_id in self.__scrapers:
             self.__logger.info(f"Scraper '{scraper_id}' ist bereits registriert.")
         else:
-            self.__scrapers[scraper_id] = self.__scraper_factory.create_scraper(scraper_id, self.__session, urls)
-            self.__logger.info(f"Scraper '{scraper_id}' registriert.")
+            try:
+                self.__scrapers[scraper_id] = self.__scraper_factory.create_scraper(scraper_id, self.__session, urls)
+                self.__logger.info(f"Scraper '{scraper_id}' registriert.")
+
+            except ValueError as e:
+                self.__logger.warning(f"Scraper vom Typ '{scraper_id}' wurde nicht registriert.")
 
 
 
