@@ -1,10 +1,13 @@
-from scraper.src.abstract_web_scraper import WebScraper
-from typ_scraper import TypScraper
-from attacken_scraper import AttackenScraper
-from requests import Session
 import logging
 
+from requests import Session
+
+from attacken_scraper import AttackenScraper
+from scraper.src.abstract_web_scraper import WebScraper
+from typ_scraper import TypScraper
+
 logger = logging.getLogger(__name__)
+
 
 class ScraperFactory:
     @staticmethod

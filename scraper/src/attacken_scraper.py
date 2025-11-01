@@ -1,6 +1,8 @@
-from abstract_web_scraper import WebScraper
 import logging
+
 from bs4 import BeautifulSoup
+
+from abstract_web_scraper import WebScraper
 
 logger = logging.getLogger(__name__)
 

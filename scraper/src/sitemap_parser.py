@@ -1,7 +1,9 @@
 import logging
 import re
 import xml.etree.ElementTree as ET
+
 from utils.scraper_utils import fetch_url_content, extract_matching_urls
+
 
 class SitemapParser:
     def __init__(self, url):

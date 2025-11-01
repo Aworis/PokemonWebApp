@@ -1,6 +1,8 @@
-import yaml
 import logging
 from pathlib import Path
+
+import yaml
+
 
 class ConfigLoader:
     def __init__(self):

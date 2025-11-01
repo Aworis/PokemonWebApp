@@ -1,7 +1,7 @@
 from config_loader import ConfigLoader
-from utils.logging_config import setup_logging
 from scraper_manager import ScraperManager
 from sitemap_parser import SitemapParser
+from utils.logging_config import setup_logging
 
 # TODO: logging ordner ändern auf scraping logger
 setup_logging()
