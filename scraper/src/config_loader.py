@@ -10,12 +10,15 @@ class ConfigLoader:
 
     def load_sitemap_urls(self, path: str = "../config/sitemaps.yaml") -> dict[str, str] | None:
         """
-        Lädt alle Sitemap-URLs aus der angegebenen YAML-Datei.
+        Lädt alle Sitemap-URLs aus YAML-Konfigurationsdatei.
         Die Datei muss ein Dictionary enthalten, das die Sitemaps wie folgt beschreibt:
 
         sitemaps:
           typen: https://example.com/sitemap_typen.xml
           news: https://example.com/sitemap_news.xml
+
+        :param path: Pfad zur YAML-Datei
+        :return: Dictionary mit Sitemap-Namen und URLs oder 'None' bei Fehler.
         """
 
         file = Path(path)
