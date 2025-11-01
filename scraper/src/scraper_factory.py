@@ -9,15 +9,29 @@ from typ_scraper import TypScraper
 logger = logging.getLogger(__name__)
 
 
+SCRAPER_MAP = {
+    "typendex": TypScraper,
+    "attackendex": AttackenScraper,
+}
+
+
 class ScraperFactory:
     @staticmethod
     def create_scraper(scraper_type: str, session: Session, urls: list[str]) -> WebScraper:
-        if scraper_type == "typendex":
-            return TypScraper(session, urls)
-        elif scraper_type == "attackendex":
-            return AttackenScraper(session, urls)
-        else:
-            message = (f"Unbekannter Scraper-Typ '{scraper_type}'. "
-                       "Kein Scraper erzeugt. Bitte überprüfe die Konfiguration.")
-            logger.warning(message)
-            raise ValueError(message)
+        """
+        Erzeugt eine Scraper-Instanz basierend auf dem angegebenen Typ.
+
+        :param scraper_type: Schlüsselwort für den gewünschten Scraper-Typ
+        :param session: HTTP-Session für Anfragen
+        :param urls: Liste von URLs, die verarbeitet werden sollen
+        :return: Instanz eines spezialisierten WebScraper
+        :raises ValueError: Wenn der Scraper-Typ unbekannt ist
+        """
+
+        scraper_class = SCRAPER_MAP.get(scraper_type)
+        if scraper_class:
+            return scraper_class(session, urls)
+        message = (f"Unbekannter Scraper-Typ '{scraper_type}'. "
+                   "Kein Scraper erzeugt. Bitte überprüfe die Konfiguration.")
+        logger.warning(message)
+        raise ValueError(message)
