@@ -28,6 +28,7 @@ class WebScraper(ABC):
         :param str url: Die Ziel-URL, die abgerufen werden soll.
         :param int retries: Anzahl verbleibender Wiederholungsversuche bei Fehlern.
         :param int delay: Sekundenzahl, die vor einem erneuten Versuch gewartet wird.
+        :return: HTML-Inhalt als String oder None bei Fehler.
         """
 
         try:
@@ -44,7 +45,7 @@ class WebScraper(ABC):
 
     def parse_data(self, html: str) -> list[dict]:
         """
-        Parst den übergebenen HTML-Inhalt.
+        Parst den übergebenen HTML-Inhalt und extrahiert strukturierte Daten.
         """
         soup = BeautifulSoup(html, "html.parser")
         return self._extract_data(soup)
