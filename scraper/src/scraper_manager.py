@@ -77,7 +77,7 @@ class ScraperManager:
                 retry_count = 3
                 retry_delay = 5
                 html = scraper.fetch_page(url, retry_count, retry_delay)
-                data = scraper.parse_data(html)
+                data = scraper.parse_html(html)
                 all_data.extend(data)
 
             except Exception as e:

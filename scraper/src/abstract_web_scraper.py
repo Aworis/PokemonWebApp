@@ -43,7 +43,7 @@ class WebScraper(ABC):
             self._logger.error(f"Fehler beim Abrufen von {url}: {e}")
             return None
 
-    def parse_data(self, html: str) -> list[dict]:
+    def parse_html(self, html: str) -> list[dict]:
         """
         Parst den übergebenen HTML-Inhalt und extrahiert strukturierte Daten.
         """
