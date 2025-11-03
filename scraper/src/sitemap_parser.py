@@ -12,6 +12,10 @@ class SitemapParser:
         self.xml_root = None
 
     def load(self):
+        """
+        Lädt die Sitemap von der URL und parst sie als XML.
+        """
+
         try:
             content = fetch_url_content(self.url)
             self.xml_root = ET.fromstring(content)
@@ -21,5 +25,12 @@ class SitemapParser:
             return False
 
     def get_matching_urls(self, pattern):
+        """
+        Extrahiert URLs aus der Sitemap, die dem Regex-Muster entsprechen.
+
+        :param pattern: Regulärer Ausdruck zur Filterung der URLs
+        :return: Liste der passenden URLs
+        """
+
         regex = re.compile(pattern)
         return extract_matching_urls(self.xml_root, regex) if self.xml_root else []
