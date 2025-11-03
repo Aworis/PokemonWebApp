@@ -29,7 +29,7 @@ class ScraperManager:
             self.__logger = logging.getLogger(__name__)
 
     @property
-    def session(self):
+    def session(self) -> requests.Session:
         return self.__session
 
     def register_scraper(self, scraper_id: str, urls: list[str]) -> None:
@@ -89,6 +89,7 @@ class ScraperManager:
     def run_all(self) -> None:
         """
         Führt alle registrierten Scraper sequenziell aus.
+        Jeder Scraper verarbeitet seine URLs, extrahiert Daten und speichert die Ergebnisse.
         """
 
         completed = 0
