@@ -4,7 +4,7 @@ from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 
-def store_scraper_output(data, scraper_id: str):
+def store_scraper_output_to_json(data, scraper_id: str):
     output_dir = Path("../data/output")
     output_dir.mkdir(parents=True, exist_ok=True)
 

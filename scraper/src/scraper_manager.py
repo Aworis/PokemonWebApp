@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from scraper.src.utils.file_io import store_scraper_output
+from scraper.src.utils.file_io import store_scraper_output_to_json
 from scraper_factory import ScraperFactory
 
 
@@ -83,7 +83,7 @@ class ScraperManager:
             except Exception as e:
                 self.__logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {e}")
 
-        store_scraper_output(all_data, scraper_id)
+        store_scraper_output_to_json(all_data, scraper_id)
         self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
 
     def run_all(self) -> None:
