@@ -33,5 +33,5 @@ LOGGING_CONFIG = {
     },
 }
 
-def setup_logging():
-    logging.config.dictConfig(LOGGING_CONFIG)
+# Config ausführen
+logging.config.dictConfig(LOGGING_CONFIG)
