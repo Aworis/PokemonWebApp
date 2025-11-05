@@ -19,7 +19,7 @@ def fetch_url_content(url: str) -> str | None:
         return None
 
     except requests.exceptions.HTTPError as e:
-        logger.error(f"HTTP-Fehler {response.status_code} beim Abrufen von {url}: {e}")
+        logger.error(f"HTTP-Fehler {e.response.status_code} beim Abrufen von {url}: {e}")
         return None
 
     except requests.exceptions.ConnectionError:
