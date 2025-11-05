@@ -1,5 +1,6 @@
 import logging
 import json
+import tempfile
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -10,19 +11,31 @@ def store_scraper_output_to_json(data, scraper_id: str):
 
     file_path = output_dir / f"{scraper_id}_output.json"
 
-    # Daten laden
-    if file_path.exists():
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                existing_data = json.load(f)
-        except json.JSONDecodeError:
-            existing_data = []
-    else:
-        existing_data = []
+    logger.info(f"Speichern der Ausgabe von Scraper '{scraper_id}' wird gestartet.")
+    existing_data = []
 
-    # Daten anhängen
-    combined_data = existing_data + data
+    try:
+        if file_path.exists():
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    existing_data = json.load(f)
+                    logger.info(f"Vorhandene Daten geladen aus: {file_path}")
 
-    # schreiben
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(combined_data, f, ensure_ascii=False, indent=2)
+            except json.JSONDecodeError:
+                logger.warning(f"Vorhandenes JSON {file_path} beschädigt. Neues JSON wird erzeugt.")
+                existing_data = []
+
+        combined_data = existing_data + data
+
+        # atomares schreiben
+        with tempfile.NamedTemporaryFile("w", delete=False, dir=output_dir, encoding="utf-8") as tf:
+            json.dump(combined_data, tf, ensure_ascii=False, indent=2)
+            temp_name = Path(tf.name)
+
+        temp_name.replace(file_path)
+        logger.info(f"Ausgabe von Scraper '{scraper_id}' gespeichert in: {file_path}")
+
+    except Exception:
+        logger.error(f"Fehler beim Speichern der Ausgabe von Scraper '{scraper_id}'.")
+        raise
+
