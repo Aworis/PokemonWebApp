@@ -6,7 +6,6 @@ from abstract_web_scraper import WebScraper
 
 logger = logging.getLogger(__name__)
 
-
 class TypScraper(WebScraper):
 
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:

@@ -3,11 +3,9 @@ from pathlib import Path
 
 import yaml
 
+logger = logging.getLogger(__name__)
 
 class ConfigLoader:
-    def __init__(self):
-        self.__logger = logging.getLogger(__name__)
-
     def load_sitemap_urls(self, path: str = "../config/sitemaps.yaml") -> dict[str, str] | None:
         """
         Lädt alle Sitemap-URLs aus YAML-Konfigurationsdatei.
@@ -23,7 +21,7 @@ class ConfigLoader:
 
         file = Path(path)
         if not file.exists():
-            self.__logger.error(f"Konfigurationsdatei nicht gefunden: {path}")
+            logger.error(f"Konfigurationsdatei nicht gefunden: {path}")
             return None
 
         try:
@@ -31,10 +29,10 @@ class ConfigLoader:
                 config = yaml.safe_load(f) or {}
                 sitemaps = config.get("sitemaps", {})
                 if not isinstance(sitemaps, dict):
-                    self.__logger.error(f"Ungültige Struktur in {path}: 'sitemaps' muss ein Dictionary sein.")
+                    logger.error(f"Ungültige Struktur in {path}: 'sitemaps' muss ein Dictionary sein.")
                     return None
-                self.__logger.info(f"{len(sitemaps)} Sitemap-URLs erfolgreich geladen aus '{path}'")
+                logger.info(f"{len(sitemaps)} Sitemap-URLs erfolgreich geladen aus '{path}'")
                 return sitemaps
         except yaml.YAMLError as e:
-            self.__logger.error(f"Fehler beim Einlesen der YAML-Datei {path}: {e}")
+            logger.error(f"Fehler beim Einlesen der YAML-Datei {path}: {e}")
             return None

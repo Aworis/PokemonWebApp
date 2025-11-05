@@ -1,10 +1,10 @@
 
+import logging
 import re
 import xml.etree.ElementTree as ET
 
 import requests
 
-import logging
 logger = logging.getLogger(__name__)
 
 def fetch_url_content(url: str) -> str | None:

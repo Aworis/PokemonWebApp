@@ -5,6 +5,7 @@ import requests
 from scraper.src.utils.file_io import store_scraper_output_to_json
 from scraper_factory import ScraperFactory
 
+logger = logging.getLogger(__name__)
 
 class ScraperManager:
     """
@@ -26,7 +27,6 @@ class ScraperManager:
             self.__scrapers = {}
             self.__session = requests.Session()
             self.__scraper_factory = ScraperFactory()
-            self.__logger = logging.getLogger(__name__)
 
     @property
     def session(self) -> requests.Session:
@@ -39,14 +39,14 @@ class ScraperManager:
         """
 
         if scraper_id in self.__scrapers:
-            self.__logger.info(f"Scraper '{scraper_id}' ist bereits registriert.")
+            logger.info(f"Scraper '{scraper_id}' ist bereits registriert.")
         else:
             try:
                 self.__scrapers[scraper_id] = self.__scraper_factory.create_scraper(scraper_id, self.__session, urls)
-                self.__logger.info(f"Scraper '{scraper_id}' registriert.")
+                logger.info(f"Scraper '{scraper_id}' registriert.")
 
             except ValueError as e:
-                self.__logger.warning(f"Scraper vom Typ '{scraper_id}' wurde nicht registriert.")
+                logger.warning(f"Scraper vom Typ '{scraper_id}' wurde nicht registriert.")
 
     def run_scraper(self, scraper_id: str) -> None:
         """
@@ -61,10 +61,10 @@ class ScraperManager:
 
         scraper = self.__scrapers.get(scraper_id)
         if not scraper:
-            self.__logger.error(f"Scraper '{scraper_id}' nicht gefunden.")
+            logger.error(f"Scraper '{scraper_id}' nicht gefunden.")
             return
 
-        self.__logger.info(f"Scraper '{scraper_id}' startet.")
+        logger.info(f"Scraper '{scraper_id}' startet.")
         urls = scraper.urls
         number_urls = len(urls)
         counter = 0
@@ -72,7 +72,7 @@ class ScraperManager:
 
         for url in urls:
             counter += 1
-            self.__logger.info(f"Verarbeite URL [{counter}/{number_urls}]: {url}")
+            logger.info(f"Verarbeite URL [{counter}/{number_urls}]: {url}")
             try:
                 retry_count = 3
                 retry_delay = 5
@@ -81,10 +81,10 @@ class ScraperManager:
                 all_data.extend(data)
 
             except Exception as e:
-                self.__logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {e}")
+                logger.error(f"Fehler bei Scraper '{scraper_id}' für URL '{url}': {e}")
 
         store_scraper_output_to_json(all_data, scraper_id)
-        self.__logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
+        logger.info(f"Scraper '{scraper_id}' erfolgreich abgeschlossen.")
 
     def run_all(self) -> None:
         """
@@ -99,5 +99,5 @@ class ScraperManager:
                 self.run_scraper(scraper_id)
                 completed += 1
             except Exception as e:
-                self.__logger.error(f"Fehler bei '{scraper_id}': {e}")
-        self.__logger.info(f"{completed} von {total_scrapers} Scrapern erfolgreich abgeschlossen.")
+                logger.error(f"Fehler bei '{scraper_id}': {e}")
+        logger.info(f"{completed} von {total_scrapers} Scrapern erfolgreich abgeschlossen.")

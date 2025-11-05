@@ -4,10 +4,10 @@ import xml.etree.ElementTree as ET
 
 from utils.scraper_utils import fetch_url_content, extract_matching_urls
 
+logger = logging.getLogger(__name__)
 
 class SitemapParser:
     def __init__(self, url):
-        self._logger = logging.getLogger(__name__)
         self.url = url
         self.xml_root = None
 
@@ -21,7 +21,7 @@ class SitemapParser:
             self.xml_root = ET.fromstring(content)
             return True
         except Exception as e:
-            self._logger.error(f"Sitemap konnte nicht geladen werden: {e}")
+            logger.error(f"Sitemap konnte nicht geladen werden: {e}")
             return False
 
     def get_matching_urls(self, pattern):

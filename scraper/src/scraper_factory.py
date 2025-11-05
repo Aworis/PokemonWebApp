@@ -8,7 +8,6 @@ from typ_scraper import TypScraper
 
 logger = logging.getLogger(__name__)
 
-
 SCRAPER_MAP = {
     "typendex": TypScraper,
     "attackendex": AttackenScraper,

@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from requests import Session
 
+logger = logging.getLogger(__name__)
 
 class WebScraper(ABC):
     """
@@ -14,7 +15,6 @@ class WebScraper(ABC):
 
     def __init__(self, session: Session, urls: list[str]):
         self._session = session
-        self._logger = logging.getLogger(__name__)
         self._urls = urls
 
     @property
@@ -37,10 +37,10 @@ class WebScraper(ABC):
             return response.text
         except requests.RequestException as e:
             if retries > 0:
-                self._logger.warning(f"Fehler beim Abrufen von {url}. {retries} verbleibende Versuche. Neuer Versuch in {delay} Sekunden...")
+                logger.warning(f"Fehler beim Abrufen von {url}. {retries} verbleibende Versuche. Neuer Versuch in {delay} Sekunden...")
                 time.sleep(delay)
                 return self.fetch_page(url, retries-1, delay)
-            self._logger.error(f"Fehler beim Abrufen von {url}: {e}")
+            logger.error(f"Fehler beim Abrufen von {url}: {e}")
             return None
 
     def parse_html(self, html: str) -> list[dict]:

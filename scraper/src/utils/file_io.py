@@ -2,7 +2,7 @@ import logging
 import json
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def store_scraper_output_to_json(data, scraper_id: str):
     output_dir = Path("../data/output")
