@@ -57,9 +57,22 @@ class WebScraper(ABC):
     def parse_html(self, html: str) -> list[dict]:
         """
         Parst den übergebenen HTML-Inhalt und extrahiert strukturierte Daten.
+        Gibt eine leere Liste zurück, wenn Fehler auftreten
         """
-        soup = BeautifulSoup(html, "html.parser")
-        return self._extract_data(soup)
+
+        if not isinstance(html, str):
+            logger.error("parse_html erwartet einen String, got %s", type(html).__name__)
+            return []
+
+        try:
+            logger.info("Parsen gestartet.")
+            soup = BeautifulSoup(html, "html.parser")
+            data = self._extract_data(soup)
+            logger.info("HTML erfolgreich geparst")
+            return data
+        except Exception as e:
+            logger.exception(f"Fehler beim Parsen des HTML-Inhalts: {e}")
+            return []
 
     @abstractmethod
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
