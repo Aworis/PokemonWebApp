@@ -29,7 +29,10 @@ class ScraperFactory:
 
         scraper_class = SCRAPER_MAP.get(scraper_type)
         if scraper_class:
-            return scraper_class(session, urls)
+            scraper = scraper_class(session, urls)
+            logger.info(f"Scraper '{scraper_type}' erfolgreich erzeugt.")
+            return scraper
+
         message = (f"Unbekannter Scraper-Typ '{scraper_type}'. "
                    "Kein Scraper erzeugt. Bitte überprüfe die Konfiguration.")
         logger.warning(message)
