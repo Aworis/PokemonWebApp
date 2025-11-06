@@ -31,17 +31,28 @@ class WebScraper(ABC):
         :return: HTML-Inhalt als String oder None bei Fehler.
         """
 
-        try:
-            response = self._session.get(url, timeout = 10)
-            response.raise_for_status()
-            return response.text
-        except requests.RequestException as e:
-            if retries > 0:
-                logger.warning(f"Fehler beim Abrufen von {url}. {retries} verbleibende Versuche. Neuer Versuch in {delay} Sekunden...")
+        for attempt in range(retries + 1):
+            try:
+                response = self._session.get(url, timeout=10)
+                response.raise_for_status()
+                return response.text
+
+            except requests.exceptions.Timeout:
+                msg = f"Timeout beim Abrufen von {url}."
+            except requests.exceptions.HTTPError as e:
+                msg = f"HTTP-Fehler {e.response.status_code} beim Abrufen von {url}."
+            except requests.exceptions.ConnectionError:
+                msg = f"Verbindungsfehler: Keine Verbindung zu {url} möglich."
+            except requests.RequestException as e:
+                msg = f"Fehler beim Abrufen von {url}: {e}"
+
+            if attempt < retries:
+                logger.warning(f"{msg} Neuer Versuch in {delay * (2 ** attempt)} Sekunden "
+                               f"({retries - attempt} verbleibend).")
                 time.sleep(delay)
-                return self.fetch_page(url, retries-1, delay)
-            logger.error(f"Fehler beim Abrufen von {url}: {e}")
-            return None
+            else:
+                logger.error(f"{msg} Alle Versuche fehlgeschlagen.")
+                return None
 
     def parse_html(self, html: str) -> list[dict]:
         """
