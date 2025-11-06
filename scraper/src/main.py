@@ -19,7 +19,7 @@ sitemaps = config_loader.load_sitemap_urls()
 for key in sitemaps:
     sitemap_url = sitemaps.get(f"{key}")
 
-    sitemap_parser = SitemapParser(sitemap_url)
+    sitemap_parser = SitemapParser(sitemap_url, session)
     sitemap_parser.load()
 
     urls = sitemap_parser.get_matching_urls(rf"{key}/[\w-]+\.php$")

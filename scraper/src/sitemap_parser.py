@@ -7,9 +7,10 @@ from utils.scraper_utils import fetch_url_content, extract_matching_urls
 logger = logging.getLogger(__name__)
 
 class SitemapParser:
-    def __init__(self, url):
+    def __init__(self, url, session):
         self.url = url
         self.xml_root = None
+        self.session = session
 
     def load(self):
         """
@@ -17,7 +18,7 @@ class SitemapParser:
         """
 
         try:
-            content = fetch_url_content(self.url)
+            content = fetch_url_content(self.url, self.session)
             self.xml_root = ET.fromstring(content)
             return True
         except Exception as e:
