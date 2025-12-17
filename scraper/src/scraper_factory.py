@@ -6,6 +6,7 @@ from scraper.src.abstract_web_scraper import WebScraper
 from typ_scraper import TypScraper
 from attacken_scraper import AttackenScraper
 from faehigkeiten_scraper import FaehigkeitenScraper
+from pokemon_scraper import PokemonScraper
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +14,7 @@ SCRAPER_MAP = {
     "typendex": TypScraper,
     "attackendex": AttackenScraper,
     "faehigkeitendex": FaehigkeitenScraper,
+    "pokedex": PokemonScraper,
 }
 
 
