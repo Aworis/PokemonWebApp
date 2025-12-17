@@ -34,15 +34,15 @@ class AttackenScraper(WebScraper):
         if not block:
             return []
 
-        pokemon_attributes = self._extract_pokemon_attributes(block)
+        attacken_attributes = self._extract_attacken_attributes(block)
 
         data = {
             "name": self._extract_name(block),
             "beschreibung": self._extract_beschreibung(block),
             "effekt": self._extract_effekt(block),
-            "staerke": pokemon_attributes.get("Stärke", ""),
-            "genauigkeit": pokemon_attributes.get("Genauigkeit", ""),
-            "angriffspunkte": pokemon_attributes.get("AP", ""),
+            "staerke": attacken_attributes.get("Stärke", ""),
+            "genauigkeit": attacken_attributes.get("Genauigkeit", ""),
+            "angriffspunkte": attacken_attributes.get("AP", ""),
         }
 
         return [data]
@@ -98,7 +98,7 @@ class AttackenScraper(WebScraper):
 
         return " ".join(text)
 
-    def _extract_pokemon_attributes(self, block: BeautifulSoup) -> dict[str, str]:
+    def _extract_attacken_attributes(self, block: BeautifulSoup) -> dict[str, str]:
         """
         Extrahiert alle Attribut-Paare (<dt>/<dd>) aus dem ersten <div>-Element
         mit der Klasse "panel-body" innerhalb des übergebenen Blocks und legt sie in ein Dictionary ab.
