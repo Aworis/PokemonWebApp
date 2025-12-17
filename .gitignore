@@ -5,6 +5,7 @@
 scraper/data/output/*
 scraper/data/images/*
 !scraper/data/output/.keep
+!scraper/data/images/.keep
 
 # logs
 logs/*

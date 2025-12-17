@@ -16,12 +16,12 @@ class AttackenScraper(WebScraper):
     den Pokédex.
 
     Extrahierte Daten:
-        - name: Der Name der Attacke.
-        - beschreibung: Eine kurze Beschreibung der Attacke.
-        - effekt:
-        - staerke:
-        - genauigkeit:
-        - angriffspunkte:
+        - Name
+        - Beschreibung
+        - Effekt
+        - Staerke
+        - Genauigkeit
+        - Angriffspunkte
     """
 
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:

@@ -1,5 +1,7 @@
 import logging
+import os
 
+import requests
 from bs4 import BeautifulSoup
 
 from abstract_web_scraper import WebScraper
@@ -8,6 +10,20 @@ logger = logging.getLogger(__name__)
 
 class PokemonScraper(WebScraper):
     """
+    Webscraper für Pokémon-Daten und Profilbilder.
+
+    Dieser Scraper ruft HTML-Seiten ab, die Informationen zu Pokémo
+    enthalten, und extrahiert aus dem HTML die relevanten Daten für
+    den Pokédex.
+
+    Extrahierte Daten:
+        - Id
+        - Profilbild-Id
+        - Profilbild
+        - Name
+        - Beschreibung
+        - Größe
+        - Gewicht
     """
 
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
@@ -23,6 +39,9 @@ class PokemonScraper(WebScraper):
         pokemon_dict = self._extract_name(block)
         pokemon_id, pokemon_name = next(iter(pokemon_dict.items()))
         pokemon_attributes = self._extract_pokemon_attributes(block)
+
+        #extract images
+        self._download_pokemon_image(block, pokemon_id)
 
         data = {
             "id": pokemon_id,
@@ -83,3 +102,27 @@ class PokemonScraper(WebScraper):
                 result[key] = value
 
         return result
+
+    def _download_pokemon_image(self, block: BeautifulSoup, pokemon_id: str, folder: str = "../data/images"):
+        """
+        Lädt Pokemon-Bild herunter und speichert es
+        im angegebenen Ordner unter dem Namen <pokemon_id>.png.
+        """
+
+        # Link aus dem <a>-Tag holen (Originalbild, nicht Thumbnail)
+        a_tag = block.find("a", class_="thumbnail")
+        if not a_tag or not a_tag.get("href"):
+            return None
+
+        image_url = a_tag["href"]
+
+        # Bild herunterladen
+        response = requests.get(image_url, stream=True)
+        if response.status_code == 200:
+            file_path = os.path.join(folder, f"{pokemon_id}.png")
+            with open(file_path, "wb") as f:
+                for chunk in response.iter_content(1024):
+                    f.write(chunk)
+            return file_path
+        else:
+            return None
