@@ -9,12 +9,21 @@ logger = logging.getLogger(__name__)
 class TypScraper(WebScraper):
 
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
+        """
+        Extrahiert die relevanten Daten eines Pokémon-Typs aus dem übergebenen
+        HTML-Dokument.
+
+        Enthaltene Daten:
+            - name: Text des ersten <h1>-Elements (Name des Typs).
+            - beschreibung: Text des ersten <p>-Elements.
+        """
+
         block = soup.select_one(".well")
         if not block:
             return []
 
         data = {
             "name": block.select_one("h1").get_text(strip=True),
-            "beschreibung": block.select_one("p").get_text(strip=True)
+            "beschreibung": block.select_one("p").get_text()
         }
         return [data]

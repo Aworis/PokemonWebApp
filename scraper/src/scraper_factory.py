@@ -2,15 +2,17 @@ import logging
 
 from requests import Session
 
-from attacken_scraper import AttackenScraper
 from scraper.src.abstract_web_scraper import WebScraper
 from typ_scraper import TypScraper
+from attacken_scraper import AttackenScraper
+from faehigkeiten_scraper import FaehigkeitenScraper
 
 logger = logging.getLogger(__name__)
 
 SCRAPER_MAP = {
     "typendex": TypScraper,
     "attackendex": AttackenScraper,
+    "faehigkeitendex": FaehigkeitenScraper,
 }
 
 
