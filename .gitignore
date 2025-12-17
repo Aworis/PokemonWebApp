@@ -3,6 +3,7 @@
 
 # Ignoriere alle Inhalte im Ordner `data`, außer `.keep`, um die Ordnerstruktur zu erhalten
 scraper/data/output/*
+scraper/data/images/*
 !scraper/data/output/.keep
 
 # logs
