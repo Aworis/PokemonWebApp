@@ -11,9 +11,10 @@ from pokemon_scraper import PokemonScraper
 logger = logging.getLogger(__name__)
 
 SCRAPER_MAP = {
-    "typendex": TypScraper,
-    "attackendex": AttackenScraper,
-    "faehigkeitendex": FaehigkeitenScraper,
+    #TODO: Kommentare wieder entfernen. Nur für Test auskommentiert.
+    #"typendex": TypScraper,
+    #"attackendex": AttackenScraper,
+    #"faehigkeitendex": FaehigkeitenScraper,
     "pokedex": PokemonScraper,
 }
 

@@ -12,13 +12,13 @@ class PokemonScraper(WebScraper):
     """
     Webscraper für Pokémon-Daten und Profilbilder.
 
-    Dieser Scraper ruft HTML-Seiten ab, die Informationen zu Pokémo
+    Dieser Scraper ruft HTML-Seiten ab, die Informationen zu Pokémon
     enthalten, und extrahiert aus dem HTML die relevanten Daten für
     den Pokédex.
 
     Extrahierte Daten:
-        - Id
-        - Profilbild-Id
+        - Id → Da es die offizielle Pokémon-ID ist, sollte diese als Datenbank-Primärschlüssel dienen.
+        - Profilbild-Id → Entspricht der offiziellen Pokémon-ID.
         - Profilbild
         - Name
         - Beschreibung
@@ -49,7 +49,8 @@ class PokemonScraper(WebScraper):
             "name": pokemon_name,
             "beschreibung": self._extract_beschreibung(block),
             "groesse": pokemon_attributes.get("Größe", ""),
-            "gewicht": pokemon_attributes.get("Gewicht", "")
+            "gewicht": pokemon_attributes.get("Gewicht", ""),
+            "attacken": self._extract_pokemon_attacken(block)
         }
 
         return [data]
@@ -91,10 +92,10 @@ class PokemonScraper(WebScraper):
         """
 
         eigenschaften_body = block.find("div", class_="panel-heading", string="Eigenschaften").find_next_sibling()
-        soup = BeautifulSoup(str(eigenschaften_body), "lxml")
+        parsed_eigenschaften_body = BeautifulSoup(str(eigenschaften_body), "lxml")
         result = {}
 
-        for dt in soup.find_all("dt"):
+        for dt in parsed_eigenschaften_body.find_all("dt"):
             dd = dt.find_next_sibling("dd")
             if dd:
                 key = dt.get_text(strip=True)
@@ -102,6 +103,48 @@ class PokemonScraper(WebScraper):
                 result[key] = value
 
         return result
+
+
+    def _extract_pokemon_attacken(self, block: BeautifulSoup) -> list[str]:
+        """
+        Extrahiert alle erlernbaren Attacken eines Pokémon aus den drei Attacken-Kategorien
+        der 9. Generation „Durch Level-Up“, „Durch TMs“ und „Durch Zucht“.
+
+        Die Methode durchsucht die jeweiligen Tabellen unterhalb der entsprechenden
+        <h4>-Überschriften und extrahiert aus jeder Tabellenzeile den Attackennamen,
+        sofern dieser in einem <td>-Element mit der Klasse "no-break" enthalten ist.
+        Der Attackenname wird aus dem Rohtext bereinigt, indem nur die erste
+        nicht-leere Zeile übernommen wird. Doppelte Einträge werden vermieden.
+        """
+
+        #Tabellen mit Attacken
+        lvlup_attacken = block.find("h4", string="Durch Level-Up").find_next_sibling()
+        tms_attacken = block.find("h4", string="Durch TMs").find_next_sibling()
+        zucht_attacken = block.find("h4", string="Durch Zucht").find_next_sibling()
+
+        tabellen = [lvlup_attacken, tms_attacken, zucht_attacken]
+        attacken = []
+
+        for tabelle in tabellen:
+            if not tabelle:
+                continue
+
+            for row in tabelle.find_all("tr"):
+                no_break_td = row.find("td", class_="no-break")
+
+                if no_break_td:
+                    raw_text = no_break_td.get_text()
+
+                    #Bereinigung des raw_text ohne '\n' usw.
+                    lines = [line.strip() for line in raw_text.split("\n") if line.strip()]
+                    attacken_name = lines[0]
+
+                    if attacken_name not in attacken:
+                        attacken.append(attacken_name)
+
+                    continue
+
+        return attacken
 
     def _download_pokemon_image(self, block: BeautifulSoup, pokemon_id: str, folder: str = "../data/images"):
         """
