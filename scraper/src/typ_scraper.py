@@ -31,7 +31,6 @@ class TypScraper(WebScraper):
             return []
 
         typ_effektivitaeten = self._extract_typ_effektivitaeten(block)
-        print(typ_effektivitaeten)
 
         data = {
             "name": block.select_one("h1").get_text(strip=True),
