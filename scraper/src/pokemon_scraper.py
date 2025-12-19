@@ -104,7 +104,7 @@ class PokemonScraper(WebScraper):
             if dd:
                 key = dt.get_text(strip=True)
                 if key == "Typ":
-                    value = self._extract_pokemon_types(dd)
+                    value = self._extract_pokemon_typen(dd)
                 else:
                     value = dd.get_text(strip=True)
 
@@ -112,7 +112,7 @@ class PokemonScraper(WebScraper):
 
         return result
 
-    def _extract_pokemon_types(self, raw_text: PageElement) -> list[str]:
+    def _extract_pokemon_typen(self, raw_text: PageElement) -> list[str]:
         """
         Helfermethode: Extrahiert alle Pokémon-Typen aus dem PageElement, indem aus jedem <a>-Tag
         der alt-Text des enthaltenen <img>-Elements ausgelesen wird.
@@ -120,15 +120,15 @@ class PokemonScraper(WebScraper):
 
         raw_text = str(raw_text)
         parsed_raw_text = BeautifulSoup(raw_text, "lxml")
-        types = []
+        typen = []
 
         # Alle <a>-Tags im Block finden
         for a_tag in parsed_raw_text.find_all("a"):
             img = a_tag.find("img")
             if img and img.has_attr("alt"):
-                types.append(img["alt"])
+                typen.append(img["alt"])
 
-        return types
+        return typen
 
 
     def _extract_pokemon_faehigkeiten(self, block: BeautifulSoup) -> dict[Any, Any]:

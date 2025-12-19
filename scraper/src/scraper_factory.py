@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 SCRAPER_MAP = {
     #TODO: Kommentare wieder entfernen. Nur für Test auskommentiert.
     #"typendex": TypScraper,
-    #"attackendex": AttackenScraper,
+    "attackendex": AttackenScraper,
     #"faehigkeitendex": FaehigkeitenScraper,
-    "pokedex": PokemonScraper,
+    #"pokedex": PokemonScraper,
 }
 
 

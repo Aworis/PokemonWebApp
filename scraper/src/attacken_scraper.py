@@ -1,7 +1,7 @@
 import logging
 
 from bs4 import BeautifulSoup
-from bs4.element import Tag
+from bs4.element import Tag, PageElement
 
 from abstract_web_scraper import WebScraper
 
@@ -40,9 +40,10 @@ class AttackenScraper(WebScraper):
             "name": self._extract_name(block),
             "beschreibung": self._extract_beschreibung(block),
             "effekt": self._extract_effekt(block),
-            "staerke": attacken_attributes.get("Stärke", ""),
-            "genauigkeit": attacken_attributes.get("Genauigkeit", ""),
-            "angriffspunkte": attacken_attributes.get("AP", ""),
+            "typen": attacken_attributes.get("Typ"),
+            "staerke": attacken_attributes.get("Stärke"),
+            "genauigkeit": attacken_attributes.get("Genauigkeit"),
+            "angriffspunkte": attacken_attributes.get("AP"),
         }
 
         return [data]
@@ -114,7 +115,29 @@ class AttackenScraper(WebScraper):
             dd = dt.find_next_sibling("dd")
             if dd:
                 key = dt.get_text(strip=True)
-                value = dd.get_text(strip=True)
+                if key == "Typ":
+                    value = self._extract_attacken_typen(dd)
+                else:
+                    value = dd.get_text(strip=True)
+
                 result[key] = value
 
         return result
+
+    def _extract_attacken_typen(self, raw_text: PageElement) -> list[str]:
+        """
+        Helfermethode: Extrahiert alle PAttacken-Typen aus dem PageElement, indem aus jedem <a>-Tag
+        der alt-Text des enthaltenen <img>-Elements ausgelesen wird.
+        """
+
+        raw_text = str(raw_text)
+        parsed_raw_text = BeautifulSoup(raw_text, "lxml")
+        typen = []
+
+        # Alle <a>-Tags im Block finden
+        for a_tag in parsed_raw_text.find_all("a"):
+            img = a_tag.find("img")
+            if img and img.has_attr("alt"):
+                typen.append(img["alt"])
+
+        return typen
