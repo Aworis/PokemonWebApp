@@ -108,10 +108,10 @@ class AttackenScraper(WebScraper):
         """
 
         allg_info_body = block.find("div", class_="panel-body")
-        soup = BeautifulSoup(str(allg_info_body), "lxml")
+        parsed_allg_info_body = BeautifulSoup(str(allg_info_body), "lxml")
         result = {}
 
-        for dt in soup.find_all("dt"):
+        for dt in parsed_allg_info_body.find_all("dt"):
             dd = dt.find_next_sibling("dd")
             if dd:
                 key = dt.get_text(strip=True)

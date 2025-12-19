@@ -130,7 +130,6 @@ class PokemonScraper(WebScraper):
 
         return typen
 
-
     def _extract_pokemon_faehigkeiten(self, block: BeautifulSoup) -> dict[Any, Any]:
         """
         Extrahiert alle Fähigkeiten-Paare (<dt>/<dd>) aus dem <div>-Element der "Fähigkeiten"
