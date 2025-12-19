@@ -3,7 +3,7 @@ import os
 from typing import Any
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, PageElement
 
 from abstract_web_scraper import WebScraper
 
@@ -51,6 +51,7 @@ class PokemonScraper(WebScraper):
             "profilbild_id": pokemon_id,
             "name": pokemon_name,
             "beschreibung": self._extract_beschreibung(block),
+            "typen": pokemon_attributes.get("Typ", ""),
             "groesse": pokemon_attributes.get("Größe", ""),
             "gewicht": pokemon_attributes.get("Gewicht", ""),
             "faehigkeiten": self._extract_pokemon_faehigkeiten(block),
@@ -102,10 +103,32 @@ class PokemonScraper(WebScraper):
             dd = dt.find_next_sibling("dd")
             if dd:
                 key = dt.get_text(strip=True)
-                value = dd.get_text(strip=True)
+                if key == "Typ":
+                    value = self._extract_pokemon_types(dd)
+                else:
+                    value = dd.get_text(strip=True)
+
                 result[key] = value
 
         return result
+
+    def _extract_pokemon_types(self, raw_text: PageElement) -> list[str]:
+        """
+        Helfermethode: Extrahiert alle Pokémon-Typen aus dem PageElement, indem aus jedem <a>-Tag
+        der alt-Text des enthaltenen <img>-Elements ausgelesen wird.
+        """
+
+        raw_text = str(raw_text)
+        parsed_raw_text = BeautifulSoup(raw_text, "lxml")
+        types = []
+
+        # Alle <a>-Tags im Block finden
+        for a_tag in parsed_raw_text.find_all("a"):
+            img = a_tag.find("img")
+            if img and img.has_attr("alt"):
+                types.append(img["alt"])
+
+        return types
 
 
     def _extract_pokemon_faehigkeiten(self, block: BeautifulSoup) -> dict[Any, Any]:
@@ -131,7 +154,6 @@ class PokemonScraper(WebScraper):
                     result[key] = value
 
         return result
-
 
     def _extract_pokemon_attacken(self, block: BeautifulSoup) -> list[str]:
         """
@@ -195,5 +217,6 @@ class PokemonScraper(WebScraper):
                 for chunk in response.iter_content(1024):
                     f.write(chunk)
             return file_path
+
         else:
             return None
