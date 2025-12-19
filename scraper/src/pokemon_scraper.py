@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Any
 
 import requests
 from bs4 import BeautifulSoup
@@ -24,6 +25,8 @@ class PokemonScraper(WebScraper):
         - Beschreibung
         - Größe
         - Gewicht
+        - Fähigkeiten
+        - Attacken
     """
 
     def _extract_data(self, soup: BeautifulSoup) -> list[dict]:
@@ -50,6 +53,7 @@ class PokemonScraper(WebScraper):
             "beschreibung": self._extract_beschreibung(block),
             "groesse": pokemon_attributes.get("Größe", ""),
             "gewicht": pokemon_attributes.get("Gewicht", ""),
+            "faehigkeiten": self._extract_pokemon_faehigkeiten(block),
             "attacken": self._extract_pokemon_attacken(block)
         }
 
@@ -72,7 +76,6 @@ class PokemonScraper(WebScraper):
 
         return {pokemon_id: pokemon_name}
 
-
     def _extract_beschreibung(self, block: BeautifulSoup) -> str:
             """
             Extrahiert den Text des ersten <li>-Elements innerhalb des <div id="pokedex">,
@@ -87,7 +90,7 @@ class PokemonScraper(WebScraper):
         """
         Extrahiert alle Attribut-Paare (<dt>/<dd>) aus dem <div>-Element der "Eigenschaften"
         mit der Klasse "panel-body" innerhalb des übergebenen Blocks und legt sie in ein Dictionary ab.
-        Das Ergebnis enthält alle Attribute der Pokemon wie
+        Das Ergebnis enthält alle Attribute des Pokemons wie
         Typ, Größe, Gewicht usw.
         """
 
@@ -101,6 +104,31 @@ class PokemonScraper(WebScraper):
                 key = dt.get_text(strip=True)
                 value = dd.get_text(strip=True)
                 result[key] = value
+
+        return result
+
+
+    def _extract_pokemon_faehigkeiten(self, block: BeautifulSoup) -> dict[Any, Any]:
+        """
+        Extrahiert alle Fähigkeiten-Paare (<dt>/<dd>) aus dem <div>-Element der "Fähigkeiten"
+        mit der Klasse "panel-body" innerhalb des übergebenen Blocks und legt sie in ein Dictionary ab.
+        Das Ergebnis enthält alle Fähigkeiten des Pokemons wie
+        Fähigkeit 1, Fähigkeit 2, Versteckte Fähigkeit usw.
+        """
+
+        faehigkeiten_body = block.find("div", class_="panel-heading", string="Fähigkeiten").find_next_sibling()
+        parsed_faehigkeiten_body = BeautifulSoup(str(faehigkeiten_body), "lxml")
+        result = {}
+
+        for dt in parsed_faehigkeiten_body.find_all("dt"):
+            dd = dt.find_next_sibling("dd")
+            if dd:
+                key = dt.get_text(strip=True)
+                value = dd.get_text(strip=True)
+                if value == "Keine":
+                    result[key] = None
+                else:
+                    result[key] = value
 
         return result
 

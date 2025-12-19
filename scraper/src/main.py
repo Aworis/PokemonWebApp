@@ -26,7 +26,7 @@ for key in sitemaps:
 
     #TODO: Später wieder entfernen.
     #Zum Testen: Nur die ersten paar Einträge behalten.
-    urls = urls[:4]
+    urls = urls[:1]
 
     scraper_manager.register_scraper(key, urls)
 
