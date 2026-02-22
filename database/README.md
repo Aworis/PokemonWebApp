@@ -32,4 +32,4 @@ Der nächste Meilenstein ist die Überführung dieses konzeptionellen ER-Modells
 2. Definition der Primär- und Fremdschlüssel.
 3. Erstellung der SQL-DDL-Skripte (`CREATE TABLE`).
 ---
-*Hinweis: Das ER-Diagramm kann als XML-Datei im Root-Verzeichnis eingesehen werden.*
+*Hinweis: Das ER-Diagramm kann als XML-Datei im docs-Verzeichnis eingesehen werden.*
