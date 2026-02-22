@@ -47,5 +47,18 @@ Da sich das Projekt in einer aktiven Entwicklungsphase befindet, existiert noch 
 ## Vertiefende Dokumentation
 Für technische Details zu den einzelnen Modulen besuche bitte die spezifischen Readmes:
 
-* [**Dokumentation: Web-Scraper**](./scraper/README.md) – *Details zu OOP-Ansatz und Modulstruktur.*
-* [**Dokumentation: Datenbank**](./database/README.md) –
+* [**Dokumentation: Web-Scraper**](./scraper/README.md)
+* [**Dokumentation: Datenbank**](./database/README.md)
+
+
+---
+
+
+## Einsatz von KI-Tools
+In diesem Projekt wurden KI-gestützte Werkzeuge (wie z. B. ChatGPT oder Gemini) gezielt als Teil des Entwicklungsprozesses eingesetzt. Dabei lag der Fokus auf:
+
+* **Recherche & Konzeption:** Unterstützung bei der Planung der Systemarchitektur und Recherche technischer Dokumentationen.
+* **Wissensaufbau:** Erläuterung komplexer Konzepte, um fundierte technische Entscheidungen treffen zu können.
+* **Dokumentation:** Unterstützung bei der Formulierung von Readme-Dateien und Methoden-Beschreibungen.
+
+**Wichtig:** Alle architektonischen Entscheidungen, das Datenbank-Design sowie die Logik des Web-Scrapers wurden eigenständig entworfen und kritisch validiert. Die KI fungierte als lernbegleitender Mentor und Recherche-Tool – die finale Kontrolle und Verantwortung über den Code und das Design liegen zu jedem Zeitpunkt bei mir.
