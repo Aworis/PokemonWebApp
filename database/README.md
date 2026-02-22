@@ -8,7 +8,7 @@ abzubilden.
 Hier ist die visuelle Darstellung des aktuellen Entwurfs:
 
 <p align="center">
-  <img src="./docs/PokemonERModell.png" alt="Entity Relationship Modell" width="800">
+  <img src="../docs/PokemonERModell.png" alt="Entity Relationship Modell" width="800">
 </p>
 
 ### Kern-Entitäten:
