@@ -63,9 +63,9 @@ GitHub-Branch-Schutzregeln können Force-Pushes blockieren. In diesem Fall gibt 
 #### B1: Branch-Schutz temporär deaktivieren
 
 1. Gehe zu **Settings → Branches → Branch protection rules** für `main`.
-2. Bearbeite die Regel und deaktiviere **„Require a pull request before merging"** und **„Allow force pushes"** aktivieren.
+2. Bearbeite die Regel: deaktiviere **„Require a pull request before merging"** und aktiviere **„Allow force pushes"**.
 3. Führe Option A aus.
-4. Schutzregel anschließend wieder aktivieren und `Allow force pushes` deaktivieren.
+4. Schutzregel anschließend wiederherstellen: aktiviere **„Require a pull request before merging"** und deaktiviere **„Allow force pushes"**.
 
 #### B2: Neuen Branch als Default-Branch setzen
 
