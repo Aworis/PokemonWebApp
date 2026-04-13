@@ -10,3 +10,13 @@ scraper/data/images/*
 # logs
 logs/*
 !logs/.keep
+
+# Environment secrets
+.env
+
+# Maven build output
+backend/target/
+
+# Node modules and frontend build
+frontend/node_modules/
+frontend/dist/
